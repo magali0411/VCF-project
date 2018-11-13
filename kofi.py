@@ -17,14 +17,16 @@ filename=Path(args.vcf)
 if not filename.exists():
     print("Oops, file doesn't exist! \n")
     exit()
-else:
-	print(filename.name, "\n") #Debug à retirer 
+#else:
+	#print(filename.name, "\n") #Debug à retirer 
 
-if Path.is_file(filename):
-	print(filename.name) # debug à retirer
-else:
-    print("Oops, this is not a file! \n")
-    exit()
+if not Path.is_file(filename):
+	#print(filename.name) # debug à retirer
+	print("Oops, this is not a file! \n")
+	exit()
+#else:
+    #print("Oops, this is not a file! \n")
+    #exit()
 
 
 # Vérifie que c'est bien un vcf

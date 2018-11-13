@@ -42,17 +42,20 @@ else:
 #    line=line.strip("\n")
 fileformat = re.findall("##fileformat=VCFv4",fd)
 chrom = re.findall("#CHROM",fd)
-                      
-if fileformat :
-    print (fileformat)
+                     
+#"if fileformat :
+#    print (fileformat)
         
-if chrom :
-    print(chrom)
+#if chrom :
+#    print(chrom)
     #exit()
-    if not chrom or not fileformat :
-        print ("Oops, file format doesn't match with vcf type")
+if not chrom or not fileformat :
+        print ("Oops, mandatory header line doesn't match with vcf type")
         exit()
-
+else : 
+	print("file successfully loaded")
+		
+# Imaginer une méthode pour vérifier que le vcf soit plein 
 
 
 	

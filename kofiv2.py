@@ -18,17 +18,17 @@ if not filename.exists():
     print("Oops, file doesn't exist! \n")
     exit()
 else:
-	print(filename.name, "\n") #Debug à retirer 
+    print(filename.name, "\n") #Debug à retirer 
 
 if not Path.is_file(filename):
-	print(filename.name) # debug à retirer
-	print("Oops, this is not a file! \n")
-	exit()
+    print(filename.name) # debug à retirer
+    print("Oops, this is not a file! \n")
+    exit()
 
 # Vérifie que c'est bien un vcf
 if filename.suffix==".vcf":
-	fd=filename.read_text()
-	
+    fd=filename.read_text()
+    
 else:
     print("Oops, ", filename.suffix, " extention is missing!")
     exit()
@@ -49,7 +49,7 @@ if not chrom or not fileformat :
     exit()
 else : 
     print("file successfully loaded")
-		
+        
 # Imaginer une méthode pour vérifier que le vcf soit plein 
 
 #VALEURS A EXTRAIRE
@@ -57,32 +57,33 @@ Dico = {}
 nb_var= 0
 
 
-
 #Creation d'un nouveau fichier
-if not os.path.isfile('kofile.txt'):
-    newf = open('kofile.txt','a')
+#if not os.path.isfile('kofile.txt'):
+#    newf = open('kofile.txt','a')
 
-else :
-    print("Fichier déjà existant")
+#else :
+#    print("Fichier déjà existant")
 
-Lecture de fd en ligne (NE MARCHE PAS)
+
+
+#Lecture de fd en ligne (NE MARCHE PAS)
 with open(filename,'r') as fl :
     print (fl.readline())
     for line in fl :
         print(line)
 
 
-    headline = re.search("^#",line)
+    headline = re.search("^##",line)
 
     print(headline)
     
-    if headline :
-            newf.write(line)
+    #if headline :
+            #newf.write(line)
 
 #Var cherche les infos importantes : Le chromosome, la position, les nucléotides et la qualité
 
     var = re.search("LG([0-9]+)\s([0-9]+)\s.\s([A-Z]+)\s([A-Z]+,*)+\s+([0-9]+.[0-9]+)", line)
-    print(var)
+    #print(var)
     if var :
         nb_var+=1
 
@@ -111,5 +112,35 @@ for cle,valeur in Dico.items() :
 
 print("Nombre de variant :"+ str(nb_var))
 
-  
-  
+#Utilisation de la librairie PANDAS pour le dataframe.
+#Si données manquantes, complète automatique par "NaN"
+#Permet de filtrer les données "à la sql"
+#A TESTER
+
+filtered = pandas.dataframe(data = Dico, index = "locus", columns ="locus" "chromosomes" "qualité" "nucléotide de base" "variant")
+
+if not os.path.isfile('kofile.txt'):
+    filtered.to_csv("kofile.txt",sep="\t",encoding="utf-8", index="locus")
+
+
+with open("kofile.txt", "a", encoding="utf-8") as f : 
+    f.write(headline)
+    print(f.read_text())
+
+# Extraction d'une ligne 
+filtered.iloc[1]
+
+#Filtre
+DataFrame.filter(items=None, like=None, regex=None, axis=None)
+
+#On crée un index sur la position
+dfi = df.set_index("locus")
+
+# Renvoit la ligne en position 14 !!
+print(dfi.loc["14"])
+
+# Extraction des chromosomes et des locus entre 1000 et 50000
+df.loc[1000:50000,["chr","locus"]]
+
+
+

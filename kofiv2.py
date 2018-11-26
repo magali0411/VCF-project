@@ -6,13 +6,22 @@ import os, sys, pathlib, argparse, re
 # Vérifie l'argument 
 parser=argparse.ArgumentParser()
 parser.add_argument("vcf" ,help="Take vcf file as argument/ vcf file path needed if it's outside your working directory")
+parser.add_argument("-m","--missing_data", type=int, default=5, choices=range(0, 101), help=" The percentage of tolerated missing data shall fall within 0-100 interval!")
+parser.add_argument("-dp","--readDepth_genotype", type=int, default=10, help="Minimum Depth of coverage (DP) per genotype")
+parser.add_argument("-p","--geno_percent", type=int, default=95, help="Minimum percentage of genotype required harboring the defined DP")
+
 args=parser.parse_args()
 #print(args.vcf,"\n")
-
+# print (args.missing_data, "\n")
+# print (args.readDepth_genotype, "\n")
+# print (args.geno_percent, "\n")
 
 # Récupère le chemin vérifie si le fichier est bien un fichier
 from pathlib import Path
 filename=Path(args.vcf)
+# print(filename.stem)
+# exit()
+
 # Vérifie que le fichier existe
 if not filename.exists():
     print("Oops, file doesn't exist! \n")
@@ -59,10 +68,13 @@ fd = open(filename,"r")
 Dico = {}
 nb_indiv = 0
 
+############################################################################################
+#                          Step 1 VCF cleaning and filtration                              # 
+############################################################################################
 
-#Creation d'un nouveau fichier
+#Creation d'un nouveau fichier vcf
 
-kofile = open('kofile.vcf','a')
+kofile = open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.vcf','a')
 
 #Ecriture de l'entête dans le nouveau vcf kofile
 from re import finditer
@@ -78,101 +90,93 @@ for line in fd :
     chromline = re.search("#CHROM.+",line)
     if chromline : 
         kofile.write("\n" + chromline.group(0))
+        # Comptage du nombre d'individus dans le vcf
         liste = chromline.group(0).split("\t")
 #        print(liste[9:])
         #print(len(liste[9:]))
         nb_indiv = len(liste[9:])
-#        print("nombre indiv "+ str(nb_indiv)+"\n")
+        # print("nombre indiv "+ str(nb_indiv)+"\n")
  #       print(chromline.group(0))
 
+#Extraction des qualité et DP générale
     qual = re.search("\s(\d+\.\d+)\s",line)
     dp_g = re.search(";(DP=)(\d+);",line)
+    
+    
+    
 
     
     if qual and dp_g:
-#        print("qualité "+ qual.group(0)+"\n")
-#        print (dp_g.group(1)+ " "+ dp_g.group(2)+ "\n")
+        # print("qualité "+ qual.group(0)+"\n")
+        # print (dp_g.group(1)+ " "+ dp_g.group(2)+ "\n")
+        # # print(dp_geno.group(2),"\n", line)
+        # exit()
+        # 
+#Filtre sur la qualité et la DP générale
         if (float(qual.group(0)) > 30 and int(dp_g.group(2))>= (int(nb_indiv)*10)) :
+            # exit()
             
-        
+            #Filtre sur un pourcentage max de données manquantes tolérées 
             missing_iterator = finditer("\.\/\.", line)
             missing_count = 0
             for match in missing_iterator:
                 missing_count +=1
-                if (float((missing_count*100)/nb_indiv)<=5):
-                    #print(line)
-                    #print(missing_count)
+            # print(line, "\n")
+            # print(missing_count, "\n")
+            # print("qualité "+ qual.group(0)+"\n")
+            # print (dp_g.group(1)+ " "+ dp_g.group(2)+ "\n")
+            # print(dp_geno.group(2),"\n")
+            if float((missing_count*100)/nb_indiv)<=args.missing_data:
+                # print(line, "\n")
+                # print(missing_count, "\n")
+                dp_geno_it=finditer(":(\d+):", line)
+                dp_geno_count=0
+                for mat in dp_geno_it:
+                    if(int(mat.group(1))>=args.readDepth_genotype):
+                        dp_geno_count+=1
+                    # else:
+                    #     print("toto", mat.group(1))
+                    #print(dp_geno_count, "\n")
+                # print(line, "\n")
+                # print("count= " ,dp_geno_count, "\n")
+                if float((dp_geno_count*100)/nb_indiv)>=args.geno_percent:
+                    # print("count1= " ,dp_geno_count, "\n")
                     kofile.write("\n" + line)
-#                    dp_geno=re.search("(\d{1}\/\d{1}:\d+,\d:)(\d+)(:)",line)
-#                    if dp_geno:
-#                        dp_geno_it=finditer(dp_geno.group(2), line)
-#                        dp_geno_count=0
-#                        for mat in dp_geno_it:
-#                            dp_geno_count+=1
-#                            print(line)
-#                            print ("DP=" , dp_geno.group(2))
-#                            print ("count=", dp_geno_count)
-                    
- 
-                    
-                    
-#                if (missing_count > 2):
-#                    continue
-#                else:
-#                    kofile.write("\n" + line)
-                    
-                    
-#           dp_geno=re.search("(\d{1}\/\d{1}:\d+,\d:)(\d+)(:)",line)
-#            if missing:
-#                print(line)
-#                
-#            
-#            listegeno=line.split("\t")
-#            
-#            #print(listegeno)
-#            for i in range(len(listegeno)):
-#                toto= listegeno.count(listegeno[9])
-#                print (toto)
+fd.close()
+kofile.close()
 
-
-
-                
-#            exit()
-#            print("qualité "+ qual.group(0)+"\n")
-#            print (dp_g.group(1)+ " "+ dp_g.group(2)+ "\n")
-#            kofile.write("\n" + line)
-        
-        
-
-
-#Var cherche les infos importantes : Le chromosome, la position, les nucléotides et la qualité
-        
-
-
+# ko = open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.vcf',"r")        
+# 
+# for line in ko :
+#     
+# #Var cherche les infos importantes : Le chromosome, la position, les nucléotides et la qualité
+#         
+# 
+# 
 #    var = re.search("LG([0-9]+)\s([0-9]+)\s.\s([A-Z]+)\s([A-Z]+,*)+\s+([0-9]+.[0-9]+)", line)
-#    print(var)
+#    print("toto",var)
 #    if var :
 #        nb_var+=1
-#
+# 
 #        chr = var.group(1)
-#
+# 
 #        pos = var.group(2)
 #        
 #        nucl1 = var.group(3)
 #        
 #        nucl2 = var.group(4)
 #        
-#        qual = var.group(5)
-
-        #Création d'un dictionnaire qui renvoit la position exactes, les nucléotides et la qualité et fonction de la position
+#        # qual = var.group(5)
+# 
+#         # Création d'un dictionnaire qui renvoit la position exactes, les nucléotides et la qualité et fonction de la position
 #      
-#        Dico[pos] =(str(chr),str(pos),str(nucl1),str(nucl2),str(qual))
-#
+#        Dico[pos] =(str(chr),str(pos),str(nucl1),str(nucl2),)
+# 
 #    else :
-#
+# 
 #        print("Oops, it seems that something's wrong with your vcf file.")
 #        exit ()
-#
+# #
 #for cle,valeur in Dico.items() :
 #    print(cle + " " + str(valeur))
 

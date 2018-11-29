@@ -69,12 +69,13 @@ Dico = {}
 nb_indiv = 0
 
 ############################################################################################
-#                          Step 1 VCF cleaning and filtration                              # 
+#                          Step 1 VCF cleaning and filtration  and conversion file                            # 
 ############################################################################################
 
 #Creation d'un nouveau fichier vcf
 
 kofile = open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.vcf','a')
+konvfile=open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.txt','a')
 
 #Ecriture de l'entête dans le nouveau vcf kofile
 from re import finditer
@@ -92,6 +93,14 @@ for line in fd :
         kofile.write("\n" + chromline.group(0))
         # Comptage du nombre d'individus dans le vcf
         liste = chromline.group(0).split("\t")
+        liste_ind=liste[9:]
+#        print(liste_ind)
+#        exit()
+        konvfile.write("\n"+ liste[0]+"\t"+liste[1]+"\t"+ liste[3]+"\t"+liste[4])
+        for i in liste_ind:
+#            print(i)
+            konvfile.write("\t"+i)
+#        exit()
 #        print(liste[9:])
         #print(len(liste[9:]))
         nb_indiv = len(liste[9:])
@@ -145,9 +154,29 @@ for line in fd :
 fd.close()
 kofile.close()
 
-# ko = open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.vcf',"r")        
+#Ouverture du nouveau fichier vcf
+ko = open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.vcf',"r").readlines()        
 # 
-# for line in ko :
+for line in ko :
+    #print(line)
+    geno = re.search("(^[a-zA-Z]+\d+)\s+(\d+)\s+.+\s+([a-zA-Z]+)\s+([a-zA-Z]),*([a-zA-Z]*)\s",line)
+    if geno:
+#        print("toto", geno)
+        ref=geno.group(3)
+        alt=geno.group(4)
+        alts=geno.group(5)
+        geno_iterator = finditer("(\d)\/(\d)", line)
+        geno_count = 0
+        for mag in geno_iterator:
+            if(mag.group(1)=="0"):
+                g1=ref
+                
+                
+            geno_count +=1
+        
+#        print(ref, alt, alts)
+    
+    
 #     
 # #Var cherche les infos importantes : Le chromosome, la position, les nucléotides et la qualité
 #         

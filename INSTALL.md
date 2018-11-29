@@ -7,7 +7,7 @@
 
 ### Softwares/Modules
 > python3-tk
->pandas 0.23.4
+> pandas 0.23.4
 
 
 

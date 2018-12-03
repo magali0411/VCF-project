@@ -67,15 +67,24 @@ fd = open(filename,"r")
 
 Dico = {}
 nb_indiv = 0
+toto=[]
+
+
 
 ############################################################################################
-#                          Step 1 VCF cleaning and filtration  and conversion file                            # 
+#                          Step 1  nettoyage & filtres du VCF                              # 
 ############################################################################################
+
+
+
+    ####### Etape 1.1 nettoyage & filtres   ####### 
+
 
 #Creation d'un nouveau fichier vcf
-
 kofile = open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.vcf','a')
-konvfile=open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.txt','a')
+
+#Creation du nouveau fichier de genotypage (conversion du vcf)
+konvfile=open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+'.txt','a')
 
 #Ecriture de l'entête dans le nouveau vcf kofile
 from re import finditer
@@ -90,31 +99,26 @@ for line in fd :
     
     chromline = re.search("#CHROM.+",line)
     if chromline : 
-        kofile.write("\n" + chromline.group(0))
+        kofile.write("\n"+chromline.group(0))
         # Comptage du nombre d'individus dans le vcf
         liste = chromline.group(0).split("\t")
+        nb_indiv = len(liste[9:])
+        
+       #Ecriture de l'entete du fichier de conversion konvfile
+        konvfile.write("\n"+"SNP_ID"+"\t"+"CHROM"+"\t"+"POS"+"\t"+"REF"+"\t"+"ALT")
         liste_ind=liste[9:]
-#        print(liste_ind)
-#        exit()
-        konvfile.write("\n"+ liste[0]+"\t"+liste[1]+"\t"+ liste[3]+"\t"+liste[4])
         for i in liste_ind:
-#            print(i)
+            # print(indiv)
             konvfile.write("\t"+i)
 #        exit()
 #        print(liste[9:])
         #print(len(liste[9:]))
-        nb_indiv = len(liste[9:])
-        # print("nombre indiv "+ str(nb_indiv)+"\n")
- #       print(chromline.group(0))
+
 
 #Extraction des qualité et DP générale
     qual = re.search("\s(\d+\.\d+)\s",line)
     dp_g = re.search(";(DP=)(\d+);",line)
-    
-    
-    
-
-    
+   
     if qual and dp_g:
         # print("qualité "+ qual.group(0)+"\n")
         # print (dp_g.group(1)+ " "+ dp_g.group(2)+ "\n")
@@ -130,51 +134,77 @@ for line in fd :
             missing_count = 0
             for match in missing_iterator:
                 missing_count +=1
-            # print(line, "\n")
-            # print(missing_count, "\n")
-            # print("qualité "+ qual.group(0)+"\n")
-            # print (dp_g.group(1)+ " "+ dp_g.group(2)+ "\n")
-            # print(dp_geno.group(2),"\n")
+
+            # Condition sur le pourcentage de de données manquantes tolérées choisi par l'utilisateur ou celle par défaut
             if float((missing_count*100)/nb_indiv)<=args.missing_data:
-                # print(line, "\n")
-                # print(missing_count, "\n")
+
                 dp_geno_it=finditer(":(\d+):", line)
                 dp_geno_count=0
+                
+                # Condition sur la DP/genotype minimale choisie par l'utilisateur ou celle par défaut
                 for mat in dp_geno_it:
                     if(int(mat.group(1))>=args.readDepth_genotype):
                         dp_geno_count+=1
-                    # else:
-                    #     print("toto", mat.group(1))
-                    #print(dp_geno_count, "\n")
-                # print(line, "\n")
-                # print("count= " ,dp_geno_count, "\n")
+
+                # Condition sur le pourcentage minimal d'individus choisi par l'utilisateur ayant la DP/genotype minimale  ou par défaut
                 if float((dp_geno_count*100)/nb_indiv)>=args.geno_percent:
-                    # print("count1= " ,dp_geno_count, "\n")
-                    kofile.write("\n" + line)
+                    # Ecriture du nouveau vcf filtré kofile
+                    kofile.write("\n"+line)
 fd.close()
 kofile.close()
 
-#Ouverture du nouveau fichier vcf
+
+
+    ####### Etape 1.2 VCF2genofile #######
+    
+# Ouverture du nouveau fichier vcf
 ko = open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.vcf',"r").readlines()        
-# 
+
+# Remplissage du geno file 
 for line in ko :
     #print(line)
     geno = re.search("(^[a-zA-Z]+\d+)\s+(\d+)\s+.+\s+([a-zA-Z]+)\s+([a-zA-Z]),*([a-zA-Z]*)\s",line)
+    
+    if not line.startswith('\n') and not line.startswith('#')  :
+        head=line.split("\t")
+        # print(head[0:5])
+        konvfile.write("\n"+head[0]+"_"+head[1]+"\t"+head[0]+"\t"+head[1]+"\t"+head[3]+"\t"+head[4])
+    
+    
+    # Conversion du format des genotypes (numerique --> allélique)
     if geno:
-#        print("toto", geno)
+        
         ref=geno.group(3)
         alt=geno.group(4)
         alts=geno.group(5)
-        geno_iterator = finditer("(\d)\/(\d)", line)
+        # print(ref+"/"+alt)
+        geno_iterator = finditer("(.)\/(.)", line)
         geno_count = 0
         for mag in geno_iterator:
-            if(mag.group(1)=="0"):
-                g1=ref
-                
+            if mag.group(0)=="0/0" or mag.group(0)=="0|0":
+                konvfile.write("\t"+ref+"/"+ref)
+            elif mag.group(0)=="0/1"or mag.group(0)=="0|1":
+                konvfile.write("\t"+ref+"/"+alt)
+            elif mag.group(0)=="1/0"or mag.group(0)=="1|0":
+                konvfile.write("\t"+alt+"/"+ref)
+            elif mag.group(0)=="0/2"or mag.group(0)=="0|2":
+                konvfile.write("\t"+ref+"/"+alts)
+            elif mag.group(0)=="2/0"or mag.group(0)=="2|0":
+                konvfile.write("\t"+alts+"/"+ref) 
+            elif mag.group(0)=="1/1"or mag.group(0)=="1|1":
+                konvfile.write("\t"+alt+"/"+alt)
+            elif mag.group(0)=="1/2"or mag.group(0)=="1|2":
+                konvfile.write("\t"+alt+"/"+alts)
+            elif mag.group(0)=="2/1"or mag.group(0)=="2|1":
+                konvfile.write("\t"+alts+"/"+alt)
+            elif mag.group(0)=="2/2"or mag.group(0)=="2|2":
+                konvfile.write("\t"+alts+"/"+alts)
+            else:
+                konvfile.write("\t"+mag.group(0))
                 
             geno_count +=1
         
-#        print(ref, alt, alts)
+        # print(geno_count )
     
     
 #     

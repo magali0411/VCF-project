@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os, sys, pathlib, argparse, re
+import os, sys, pathlib, argparse, re, matplotlib
 
 # Vérifie l'argument 
 parser=argparse.ArgumentParser()
@@ -206,7 +206,13 @@ for line in ko :
         
         # print(geno_count )
 konvfile.close()
-    
+
+# #Dans Pandas
+# 
+# import pandas as pd
+# data = pd.read_table(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+'.txt', delimiter="\t")
+# # print(data.columns)
+# data.plot.hist()
 #     
 # #Var cherche les infos importantes : Le chromosome, la position, les nucléotides et la qualité
 #         

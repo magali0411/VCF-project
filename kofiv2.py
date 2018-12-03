@@ -205,7 +205,7 @@ for line in ko :
             geno_count +=1
         
         # print(geno_count )
-    
+konvfile.close()
     
 #     
 # #Var cherche les infos importantes : Le chromosome, la position, les nucléotides et la qualité

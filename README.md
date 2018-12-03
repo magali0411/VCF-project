@@ -12,6 +12,7 @@ Command
 
 Arguments
 
+Si le vcf de départ est phasé le fichier geno respectera l'ordre du phasage meme si le genotype est noté "/"
 
 
 ##Contributing

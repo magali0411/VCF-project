@@ -110,6 +110,21 @@ def verif_opening(filepath) :
     prog = Label(loading, bg = orange, text = "Path OK!", font = ("Helvetica", 10))
     prog.grid(sticky='ew')
 
+    
+    ################################################################################
+    # Normalement l'utilisteur choisi forcément un fichier de type VCF
+    # des doubles vérifications sont tout de même effectuées
+    ###########################################################################""
+
+    #Si le fichier séléctionné n'existe pas 
+    if not filename.exists():
+
+        #Exit de la fonction de chargement, affichage d'une erreur
+        return showerror("Error", "Oops, this file dosn't exist!")
+
+    #Sinon, affichage que c'est ok!
+    prog.configure(text = "Path OK! \n File OK!")
+
     ########### Création d'un compteur du temps d'analyse #####
     #compteur = 0 
     def compteur_sec() :
@@ -142,19 +157,6 @@ def verif_opening(filepath) :
 
 
     compteur_sec()
-    ################################################################################
-    # Normalement l'utilisteur choisi forcément un fichier de type VCF
-    # des doubles vérifications sont tout de même effectuées
-    ###########################################################################""
-
-    #Si le fichier séléctionné n'existe pas 
-    if not filename.exists():
-
-        #Exit de la fonction de chargement, affichage d'une erreur
-        return showerror("Error", "Oops, this file dosn't exist!")
-
-    #Sinon, affichage que c'est ok!
-    prog.configure(text = "Path OK! \n File OK!")
 
     ################# Ouverture et vérification à l'intérieur du fichier ####################
     def next() :
@@ -297,8 +299,6 @@ def filtre(filename) :
     valide = Button(main, relief = 'groove', bg = bluedark, fg = "white",font = "Helevtica 12", text = "Bloquer les valeurs", command = val)
     valide.place(relx = 0.8, rely= 0.8 )
 
-
-
 def nettoyage(filename) :
     nettoyage = Toplevel(main, cursor = "watch", bg = blue)
     nettoyage.geometry("%dx%d%+d%+d" % (ws//3,hs//3,ws//3,hs//3))  
@@ -309,10 +309,14 @@ def nettoyage(filename) :
 
     nb_indiv = 0
     #Creation d'un nouveau fichier vcf
+    print(str(m))
+    print(m)
     kofile = open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.vcf','a')
+    nameko = filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.vcf'
 
     #Creation du nouveau fichier de genotypage (conversion du vcf)
     konvfile=open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.geno'+'.txt','a')
+    namekonv = filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.geno'+'.txt'
 
     #Ecriture de l'entête dans le nouveau vcf kofile
     from re import finditer
@@ -356,7 +360,7 @@ def nettoyage(filename) :
             # exit()
             # 
     #Filtre sur la qualité et la DP générale
-            if (float(qual.group(0)) > 30 and int(dp_g.group(2))>= (int(nb_indiv)*10)) :
+            if (double(qual.group(0)) > 30 and int(dp_g.group(2))>= (int(nb_indiv)*10)) :
                 # exit()
                 
                 #Filtre sur un pourcentage max de données manquantes tolérées 
@@ -366,7 +370,7 @@ def nettoyage(filename) :
                     missing_count +=1
 
                 # Condition sur le pourcentage de de données manquantes tolérées choisi par l'utilisateur ou celle par défaut
-                if float((missing_count*100)/nb_indiv)<=float(m):
+                if double((missing_count*100)/nb_indiv)<=double(m):
                 #float((missing_count*100)/nb_indiv)<=float(m):
 
                     dp_geno_it=finditer(":(\d+):", line)
@@ -378,11 +382,63 @@ def nettoyage(filename) :
                             dp_geno_count+=1
 
                     # Condition sur le pourcentage minimal d'individus choisi par l'utilisateur ayant la DP/genotype minimale  ou par défaut
-                    if float((dp_geno_count*100)/nb_indiv)>=float(P):
+                    if double((dp_geno_count*100)/nb_indiv)>=double(P):
                         # Ecriture du nouveau vcf filtré kofile
                         kofile.write("\n"+line)
     fd.close()
     kofile.close()
+    ####### Etape 1.2 VCF2genofile #######
+
+    # Ouverture du nouveau fichier vcf
+    ko = open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.vcf',"r").readlines()        
+
+    # Remplissage du geno file 
+    for line in ko :
+        #print(line)
+        geno = re.search("(^[a-zA-Z]+\d+)\s+(\d+)\s+.+\s+([a-zA-Z]+)\s+([a-zA-Z]),*([a-zA-Z]*)\s",line)
+        
+        if not line.startswith('\n') and not line.startswith('#')  :
+            head=line.split("\t")
+            # print(head[0:5])
+            konvfile.write("\n"+head[0]+"_"+head[1]+"\t"+head[0]+"\t"+head[1]+"\t"+head[3]+"\t"+head[4])
+        
+        
+        # Conversion du format des genotypes (numerique --> allélique)
+        if geno:
+            
+            ref=geno.group(3)
+            alt=geno.group(4)
+            alts=geno.group(5)
+            # print(ref+"/"+alt)
+            geno_iterator = finditer("(.)\/(.)", line)
+            geno_count = 0
+            for mag in geno_iterator:
+                if mag.group(0)=="0/0" or mag.group(0)=="0|0":
+                    konvfile.write("\t"+ref+"/"+ref)
+                elif mag.group(0)=="0/1"or mag.group(0)=="0|1":
+                    konvfile.write("\t"+ref+"/"+alt)
+                elif mag.group(0)=="1/0"or mag.group(0)=="1|0":
+                    konvfile.write("\t"+alt+"/"+ref)
+                elif mag.group(0)=="0/2"or mag.group(0)=="0|2":
+                    konvfile.write("\t"+ref+"/"+alts)
+                elif mag.group(0)=="2/0"or mag.group(0)=="2|0":
+                    konvfile.write("\t"+alts+"/"+ref) 
+                elif mag.group(0)=="1/1"or mag.group(0)=="1|1":
+                    konvfile.write("\t"+alt+"/"+alt)
+                elif mag.group(0)=="1/2"or mag.group(0)=="1|2":
+                    konvfile.write("\t"+alt+"/"+alts)
+                elif mag.group(0)=="2/1"or mag.group(0)=="2|1":
+                    konvfile.write("\t"+alts+"/"+alt)
+                elif mag.group(0)=="2/2"or mag.group(0)=="2|2":
+                    konvfile.write("\t"+alts+"/"+alts)
+                else:
+                    konvfile.write("\t"+mag.group(0))
+                    
+                geno_count +=1
+            
+            # print(geno_count )
+    konvfile.close()
+    showinfo(title="files created", message = "{} \n created on your main vcf respository".format(nameko+'\n'+namekonv))
 
 
 #Chargement interface 

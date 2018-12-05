@@ -199,9 +199,12 @@ def verif_opening(filepath) :
 ############# Mise en place des filtres ##################
 
 #Initialisation des variables
-m = DoubleVar() 
-DP = IntVar()
-P = DoubleVar()
+#m = DoubleVar() 
+m = ""
+#DP = IntVar()
+DP = ""
+#P = DoubleVar()
+P = ""
 
 
 def filtre(filename) :
@@ -261,45 +264,41 @@ def filtre(filename) :
     def val() :
         #Affectation ou non des de la valeur de la DP
         try : 
-            DP = choix_DP.get()
+            DP = int(choix_DP.get())
             #Desactivation de la séléction
             choix_DP.configure(state = 'disabled')
 
         except :
 
             return showerror(title = "Error", message = "Numeric value expecter for DP")
-            
-
 
         #Affectation ou non des de la valeur de la data
         try :
-            m = choix_data.get()
+            m = float(choix_data.get())
             #Desactivation de la séléction
             choix_data.configure(state='disabled')
 
         except :
 
             return showerror(title = "Error", message = "Numeric value expecter for missing data")
-    
-
 
         #Affectation ou non des de la valeur du génotype
 
         try :
-            P = choix_gen.get()
+            P = float(choix_gen.get())
             #Desactivation de la séléction
             choix_gen.configure(state='disabled')
         except :
             return showerror(title = "Error", message = "Numeric value expecter for genotpye")
 
         #Passage au nettoyage
-        nettoyage(filename)
+        nettoyage(filename,m,P,DP)
 
     #Création et placement du bouton de validation    
     valide = Button(main, relief = 'groove', bg = bluedark, fg = "white",font = "Helevtica 12", text = "Bloquer les valeurs", command = val)
     valide.place(relx = 0.8, rely= 0.8 )
 
-def nettoyage(filename) :
+def nettoyage(filename, m, P, DP) :
     nettoyage = Toplevel(main, cursor = "watch", bg = blue)
     nettoyage.geometry("%dx%d%+d%+d" % (ws//3,hs//3,ws//3,hs//3))  
     nettoyage.title =("Kofi")
@@ -309,8 +308,6 @@ def nettoyage(filename) :
 
     nb_indiv = 0
     #Creation d'un nouveau fichier vcf
-    print(str(m))
-    print(m)
     kofile = open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.vcf','a')
     nameko = filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.vcf'
 
@@ -370,7 +367,7 @@ def nettoyage(filename) :
                     missing_count +=1
 
                 # Condition sur le pourcentage de de données manquantes tolérées choisi par l'utilisateur ou celle par défaut
-                if double((missing_count*100)/nb_indiv)<=double(m):
+                if float((missing_count*100)/nb_indiv)<=float(m):
                 #float((missing_count*100)/nb_indiv)<=float(m):
 
                     dp_geno_it=finditer(":(\d+):", line)
@@ -382,7 +379,7 @@ def nettoyage(filename) :
                             dp_geno_count+=1
 
                     # Condition sur le pourcentage minimal d'individus choisi par l'utilisateur ayant la DP/genotype minimale  ou par défaut
-                    if double((dp_geno_count*100)/nb_indiv)>=double(P):
+                    if float((dp_geno_count*100)/nb_indiv)>=float(P):
                         # Ecriture du nouveau vcf filtré kofile
                         kofile.write("\n"+line)
     fd.close()

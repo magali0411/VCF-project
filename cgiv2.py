@@ -351,13 +351,13 @@ def nettoyage(filename, m, P, DP) :
         dp_g = re.search(";(DP=)(\d+);",line)
     
         if qual and dp_g:
-            # print("qualité "+ qual.group(0)+"\n")
-            # print (dp_g.group(1)+ " "+ dp_g.group(2)+ "\n")
-            # # print(dp_geno.group(2),"\n", line)
-            # exit()
+            print("qualité "+ qual.group(0)+"\n")
+            print (dp_g.group(1)+ " "+ dp_g.group(2)+ "\n")
+            print(dp_g.group(2),"\n", line)
+            #exit()
             # 
     #Filtre sur la qualité et la DP générale
-            if (double(qual.group(0)) > 30 and int(dp_g.group(2))>= (int(nb_indiv)*10)) :
+            if (float(qual.group(0)) > 30 and int(dp_g.group(2))>= (int(nb_indiv)*10)) :
                 # exit()
                 
                 #Filtre sur un pourcentage max de données manquantes tolérées 

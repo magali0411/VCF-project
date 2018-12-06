@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os, sys, pathlib, argparse, re, matplotlib
-
+import numpy as np
+import pandas as pd
 # Vérifie l'argument 
 parser=argparse.ArgumentParser()
 parser.add_argument("vcf" ,help="Take vcf file as argument/ vcf file path needed if it's outside your working directory")
@@ -67,7 +68,7 @@ fd = open(filename,"r")
 
 Dico = {}
 nb_indiv = 0
-toto=[]
+
 
 
 
@@ -135,7 +136,7 @@ for line in fd :
             for match in missing_iterator:
                 missing_count +=1
 
-            # Condition sur le pourcentage de de données manquantes tolérées choisi par l'utilisateur ou celle par défaut
+            # Condition sur le pourcentage de données manquantes tolérées choisi par l'utilisateur ou celle par défaut
             if float((missing_count*100)/nb_indiv)<=args.missing_data:
 
                 dp_geno_it=finditer(":(\d+):", line)
@@ -165,6 +166,7 @@ for line in ko :
     #print(line)
     geno = re.search("(^[a-zA-Z]+\d+)\s+(\d+)\s+.+\s+([a-zA-Z]+)\s+([a-zA-Z]),*([a-zA-Z]*)\s",line)
     
+    
     if not line.startswith('\n') and not line.startswith('#')  :
         head=line.split("\t")
         # print(head[0:5])
@@ -179,9 +181,10 @@ for line in ko :
         alts=geno.group(5)
         # print(ref+"/"+alt)
         geno_iterator = finditer("(.)\/(.)", line)
-        geno_count = 0
+        g1 = 0
         for mag in geno_iterator:
             if mag.group(0)=="0/0" or mag.group(0)=="0|0":
+                g1+=1
                 konvfile.write("\t"+ref+"/"+ref)
             elif mag.group(0)=="0/1"or mag.group(0)=="0|1":
                 konvfile.write("\t"+ref+"/"+alt)
@@ -202,16 +205,17 @@ for line in ko :
             else:
                 konvfile.write("\t"+mag.group(0))
                 
-            geno_count +=1
+            # geno_count +=1
         
-        # print(geno_count )
+        konvfile.write("\t"+ref+"/"+ref+"\t"+str(g1))
 konvfile.close()
 
 # #Dans Pandas
 # 
-# import pandas as pd
-# data = pd.read_table(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+'.txt', delimiter="\t")
-# # print(data.columns)
+
+data = pd.read_table(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+'.txt', delimiter="\t")
+print(type(data))
+# print(data.describe())
 # data.plot.hist()
 #     
 # #Var cherche les infos importantes : Le chromosome, la position, les nucléotides et la qualité

@@ -1,9 +1,11 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os, sys, pathlib, argparse, re, matplotlib
+import os, sys, pathlib, argparse, re
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 # Vérifie l'argument 
 parser=argparse.ArgumentParser()
 parser.add_argument("vcf" ,help="Take vcf file as argument/ vcf file path needed if it's outside your working directory")
@@ -68,16 +70,7 @@ fd = open(filename,"r")
 
 Dico = {}
 nb_indiv = 0
-g1=0
-g2=0
-g3=0
-g4=0
-g5=0
-g6=0
-g7=0
-g8=0
-g9=0
-g0=0
+#gg=1
 
 
 
@@ -126,7 +119,7 @@ for line in fd :
                        "\t"+"G1"+"\t"+"G1_Total"+"\t"+"G2"+"\t"+"G2_Total"+"\t"+"G3"+
                        "\t"+"G3_Total"+"\t"+"G4"+"\t"+"G4_Total"+"\t"+"G5"+"\t"+"G5_Total"+
                        "\t"+"G6"+"\t"+"G6_Total"+"\t"+"G7"+"\t"+"G7_Total"+"\t"+"G8"+"\t"+"G8_Total"+
-                       "\t"+"G9"+"\t"+"G9_Total"+"\t"+"G10"+"\t"+"G10_Total"
+                       "\t"+"G9"+"\t"+"G9_Total"+"\t"+"G10"+"\t"+"GG_Total"
                        )
         liste_ind=liste[9:]
         for i in liste_ind:
@@ -204,15 +197,28 @@ for line in ko :
         alts=geno.group(5)
         # print(ref+"/"+alt)
         geno_iterator = finditer("(.)\/(.)", line)
-        
-        
+        gg=1
+        g2=1
+        g3=1
+        g4=1
+        g5=1
+        g6=1
+        g7=1
+        g8=1
+        g9=1
+        g0=1
+
         for mag in geno_iterator:
             if mag.group(0)=="0/0" or mag.group(0)=="0|0":
-                g1+=1
                 konvfile.write("\t"+ref+"/"+ref)
+#                print(ref+"/"+ref)
+                gg+=1
+#                kogefile.write("\t"+ref+"/"+ref+"\t"+str(g1))
+            
             elif mag.group(0)=="0/1"or mag.group(0)=="0|1":
                 g2+=1
                 konvfile.write("\t"+ref+"/"+alt)
+#                kogefile.write("\t"+ref+"/"+alt+"\t"+str(g1))
             elif mag.group(0)=="1/0"or mag.group(0)=="1|0":
                 g3+=1
                 konvfile.write("\t"+alt+"/"+ref)
@@ -237,13 +243,16 @@ for line in ko :
             else:
                 g0+=1
                 konvfile.write("\t"+mag.group(0))
+#                kogefile.write("\t"+mag.group(0)+"\t"+str(g0))
                 
-            # geno_count +=1
+
+#        print("\n",gg)
+
         
-        kogefile.write("\t"+ref+"/"+ref+"\t"+str(g1)+"\t"+ref+"/"+alt+"\t"+str(g2)+"\t"+alt+"/"+ref+"\t"+str(g3)+
-                       "\t"+ref+"/"+alts+"\t"+str(g4)+"\t"+alts+"/"+ref+"\t"+str(g5)+"\t"+alt+"/"+alt+"\t"+str(g6)+
-                       "\t"+alt+"/"+alts+"\t"+str(g7)+"\t"+alts+"/"+alt+"\t"+str(g8)+"\t"+alts+"/"+alts+"\t"+str(g9)+
-                       "\t"+mag.group(0)+"\t"+str(g0))
+        kogefile.write("\t"+ref+"/"+ref+"\t"+str(gg)+"\t"+ref+"/"+alt+"\t"+str(g2)+"\t"+alt+"/"+ref+"\t"+str(g3)+
+                               "\t"+ref+"/"+alts+"\t"+str(g4)+"\t"+alts+"/"+ref+"\t"+str(g5)+"\t"+alt+"/"+alt+"\t"+str(g6)+
+                               "\t"+alt+"/"+alts+"\t"+str(g7)+"\t"+alts+"/"+alt+"\t"+str(g8)+"\t"+alts+"/"+alts+"\t"+str(g9)+
+                               "\t"+mag.group(0)+"\t"+str(g0))
 konvfile.close()
 kogefile.close()
 
@@ -251,7 +260,29 @@ kogefile.close()
 # 
 
 data = pd.read_table(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+ '.distrib'+'.txt', delimiter="\t")
-print(data)
+
+df=pd.DataFrame(data[['POS','G1_Total','G2_Total','G3_Total','G4_Total','G5_Total','G6_Total','G7_Total','G8_Total','G9_Total','GG_Total']])
+#print(df.columns)
+#exit()
+#print(df)
+#df = pd.DataFrame(np.random.random((5,5)), columns=["a","b","c","d","e"])
+ 
+# Default heatmap: just a visualization of this square matrix
+df = df.pivot_table(index=data[['POS']],
+                        values=data[['G1_Total','G2_Total','G3_Total','G4_Total','G5_Total','G6_Total','G7_Total','G8_Total','G9_Total','GG_Total']])
+#                        columns=data[['G1','G2','G3','G4','G5','G6','G7','G8','G9','G10']])
+#print(data)
+#exit()
+#print(nb_indiv)
+p1 = sns.heatmap(df,vmin=0,vmax=250,cmap="RdBu_r")
+
+plt.show()
+#print()
+
+
+
+
+#print(data)
 # print(data.describe())
 # data.plot.hist()
 #     

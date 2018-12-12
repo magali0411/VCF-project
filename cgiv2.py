@@ -5,9 +5,8 @@
 
 import os, sys, pathlib, argparse, re, time, threading
 from pathlib import Path
-
-#import numpy as np
-#import pandas as pd
+import numpy as np
+import pandas as pd
 
 #Installation de Tkinter selon les différentes versions
 try:
@@ -52,7 +51,7 @@ g0=0
 #Procédure de fermeture de le fenêtre princiaple
 def Exit():
     if askyesno("Exit", "Êtes-vous sûr de vouloir quitter?"):
-        showwarning('Exit', "Fermeture de kofi")
+        showwarning('Exit', "Fermeture de kofi") 
         main.destroy()
 
     else:
@@ -128,13 +127,22 @@ def verif_opening(filepath) :
         text.pack(pady = 25)
         compteur_lbl.pack()
         coff.pack(side = BOTTOM)
+        
+    # On récupère le chemin du fichier dans une variable si le fichier existe 
 
-    # On récupère le chemin du fichier dans une variable
-    filename = Path(filepath)
+
+    try : 
+        filename = Path(filepath)
+    except :
+        return showwarning("Warning", "Please select a file!")
 
     # Vérifie que l'utilisateur a bien choisi un fichier
     if not Path.is_file(filename):
         return showwarning("Warning", "Please select a file!")
+
+    if showwarning :
+        loading.destroy
+
     prog = Label(loading, bg = orange, text = "Path OK!", font = ("Helvetica", 10))
     prog.grid(sticky='ew')
 
@@ -197,7 +205,7 @@ def verif_opening(filepath) :
 def filtre(filename) :
     main.configure(bg="white")
     back.destroy()
-    back2.destroy()
+    #back2.destroy()
     load.destroy()
     info = Label(main, text = "VCF file is load.", font = "Helevtica 14 bold" , bg = "white" )
     info2 = Label(main, font = "Helevtica 12", text ="By default, we only kept data when : \n -quality score was over 30 \n -DP (read depth) was at least 10 time highter than individual" , bg = "white")
@@ -206,7 +214,7 @@ def filtre(filename) :
 
     # Création des cadres
     cadre_data = LabelFrame(main, bd=1, text = "Missing data", font = "Helevtica 14", bg = orange)
-    cadre_dp = LabelFrame(main, bd=1, text = "DP (deep lenght)",  bg = orange, font = "Helevtica 14")
+    cadre_dp = LabelFrame(main, bd=1, text = "DP (Depth)",  bg = orange, font = "Helevtica 14")
     cadre_gen = LabelFrame(main, bd=1, text = "Génotype",  bg = orange, font = "Helevtica 14")
 
     #Placement des deux cadres
@@ -228,7 +236,7 @@ def filtre(filename) :
     l1 = Label(cadre_data, text = "Veuillez selectionner la qualité minimale (valeur numérique attendue)", bg = orange)
     b1 = Button(cadre_data,bitmap = 'question',fg="black", command = info_data).pack(side = RIGHT)
     l1.pack(side = LEFT)
-    l2 = Label(cadre_dp, text = "Veuillez selectionner la DP minimale (valeur numérique attendue", bg = orange)
+    l2 = Label(cadre_dp, text = "Veuillez selectionner la DP minimale (valeur numérique attendue)", bg = orange)
     b2 = Button(cadre_dp,bitmap = 'question', fg = "black", command = info_dp).pack(side = RIGHT)
     l2.pack(side = LEFT)
     l3 = Label(cadre_gen, text = "Veuillez selectionner le % de génotype (valeur numérique attendue)", bg = orange)
@@ -236,15 +244,21 @@ def filtre(filename) :
     l3.pack(side = LEFT)
 
     #Choix des données manquantes
-    choix_data = Spinbox(cadre_data, from_=0, to=100, increment=10, bg="white")
+    def1 = StringVar(main)
+    def1.set(5)
+    choix_data = Spinbox(cadre_data, from_=0, to=50, increment=5, bg="white", textvariable = def1)
     choix_data.pack()
 
     #Choix de la DP 
-    choix_DP = Spinbox(cadre_dp, from_=0, to=30, increment=5, bg="white")
+    def2 = StringVar(main)
+    def2.set(10)
+    choix_DP = Spinbox(cadre_dp, from_=0, to=30, increment=5, bg="white", textvariable = def2)
     choix_DP.pack()
 
     #Choix du % de génotype
-    choix_gen = Spinbox(cadre_gen, from_= 0, to=100, increment = 5, bg = "white")
+    def3 = StringVar(main)
+    def3.set(95)
+    choix_gen = Spinbox(cadre_gen, from_= 0, to=100, increment = 5, bg = "white", textvariable = def3 )
     choix_gen.pack()
 
     #Validation des valeurs 
@@ -268,7 +282,7 @@ def filtre(filename) :
         except :
 
             return showerror(title = "Error", message = "Numeric value expecter for missing data")
-
+            
         #Affectation ou non des de la valeur du génotype
 
         try :
@@ -341,11 +355,11 @@ def nettoyage(filename, m, P, DP) :
                 konvfile.write("\t"+i)
 
             #Ecriture de l'entete du fichier de geno distrib kogefile
-                kogefile.write("\n"+"SNP_ID"+"\t"+"CHROM"+"\t"+"POS"+"\t"+"REF"+"\t"+"ALT"+
-                       "\t"+"G1"+"\t"+"G1_Total"+"\t"+"G2"+"\t"+"G2_Total"+"\t"+"G3"+
-                       "\t"+"G3_Total"+"\t"+"G4"+"\t"+"G4_Total"+"\t"+"G5"+"\t"+"G5_Total"+
-                       "\t"+"G6"+"\t"+"G6_Total"+"\t"+"G7"+"\t"+"G7_Total"+"\t"+"G8"+"\t"+"G8_Total"+
-                       "\t"+"G9"+"\t"+"G9_Total"+"\t"+"G10"+"\t"+"G10_Total"
+            kogefile.write("\n"+"SNP_ID"+"\t"+"CHROM"+"\t"+"POS"+"\t"+"REF"+"\t"+"ALT"+
+                    "\t"+"G1"+"\t"+"G1_Total"+"\t"+"G2"+"\t"+"G2_Total"+"\t"+"G3"+
+                    "\t"+"G3_Total"+"\t"+"G4"+"\t"+"G4_Total"+"\t"+"G5"+"\t"+"G5_Total"+
+                    "\t"+"G6"+"\t"+"G6_Total"+"\t"+"G7"+"\t"+"G7_Total"+"\t"+"G8"+"\t"+"G8_Total"+
+                    "\t"+"G9"+"\t"+"G9_Total"+"\t"+"GG"+"\t"+"GG_Total"
                 )
 
 
@@ -389,32 +403,49 @@ def nettoyage(filename, m, P, DP) :
     # Ouverture du nouveau fichier vcf
     ko = open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.vcf',"r").readlines()        
 
-    # Remplissage du geno file 
+# Remplissage du geno file 
     for line in ko :
-
+    #print(line)
         geno = re.search("(^[a-zA-Z]+\d+)\s+(\d+)\s+.+\s+([a-zA-Z]+)\s+([a-zA-Z]),*([a-zA-Z]*)\s",line)
-        
+    
+    
         if not line.startswith('\n') and not line.startswith('#')  :
             head=line.split("\t")
+        # print(head[0:5])
             konvfile.write("\n"+head[0]+"_"+head[1]+"\t"+head[0]+"\t"+head[1]+"\t"+head[3]+"\t"+head[4])
             kogefile.write("\n"+head[0]+"_"+head[1]+"\t"+head[0]+"\t"+head[1]+"\t"+head[3]+"\t"+head[4])
-        
-        # Conversion du format des genotypes (numerique --> allélique)
+    
+    
+    # Conversion du format des genotypes (numerique --> allélique)
         if geno:
-            
+        
             ref=geno.group(3)
             alt=geno.group(4)
             alts=geno.group(5)
             # print(ref+"/"+alt)
             geno_iterator = finditer("(.)\/(.)", line)
-            geno_count = 0
+            gg=1
+            g2=1
+            g3=1
+            g4=1
+            g5=1
+            g6=1
+            g7=1
+            g8=1
+            g9=1
+            g0=1
+
             for mag in geno_iterator:
                 if mag.group(0)=="0/0" or mag.group(0)=="0|0":
-                    g1+=1
                     konvfile.write("\t"+ref+"/"+ref)
+        #                print(ref+"/"+ref)
+                    gg+=1
+        #                kogefile.write("\t"+ref+"/"+ref+"\t"+str(g1))
+                
                 elif mag.group(0)=="0/1"or mag.group(0)=="0|1":
                     g2+=1
                     konvfile.write("\t"+ref+"/"+alt)
+        #                kogefile.write("\t"+ref+"/"+alt+"\t"+str(g1))
                 elif mag.group(0)=="1/0"or mag.group(0)=="1|0":
                     g3+=1
                     konvfile.write("\t"+alt+"/"+ref)
@@ -439,15 +470,19 @@ def nettoyage(filename, m, P, DP) :
                 else:
                     g0+=1
                     konvfile.write("\t"+mag.group(0))
-                
-            # geno_count +=1
-        
-            kogefile.write("\t"+ref+"/"+ref+"\t"+str(g1)+"\t"+ref+"/"+alt+"\t"+str(g2)+"\t"+alt+"/"+ref+"\t"+str(g3)+
-                           "\t"+ref+"/"+alts+"\t"+str(g4)+"\t"+alts+"/"+ref+"\t"+str(g5)+"\t"+alt+"/"+alt+"\t"+str(g6)+
-                           "\t"+alt+"/"+alts+"\t"+str(g7)+"\t"+alts+"/"+alt+"\t"+str(g8)+"\t"+alts+"/"+alts+"\t"+str(g9)+
-                           "\t"+mag.group(0)+"\t"+str(g0))
+        #                kogefile.write("\t"+mag.group(0)+"\t"+str(g0))
+                    
+
+                print("\n",gg)
+
+            
+            kogefile.write("\t"+ref+"/"+ref+"\t"+str(gg)+"\t"+ref+"/"+alt+"\t"+str(g2)+"\t"+alt+"/"+ref+"\t"+str(g3)+
+                                    "\t"+ref+"/"+alts+"\t"+str(g4)+"\t"+alts+"/"+ref+"\t"+str(g5)+"\t"+alt+"/"+alt+"\t"+str(g6)+
+                                    "\t"+alt+"/"+alts+"\t"+str(g7)+"\t"+alts+"/"+alt+"\t"+str(g8)+"\t"+alts+"/"+alts+"\t"+str(g9)+
+                                    "\t"+mag.group(0)+"\t"+str(g0))
     konvfile.close()
     kogefile.close()
+
     showinfo(title="files created", message = "{} \ncreated on your main vcf respository.\nThe first is a new version of your vcf that contains only data that match your filters \nThe second one is a version mor readable of the first one \nAnd the third one is a usefull file to make stat".format(nameko+'\n'+namekonv +'\n'+namekoge))
     if showinfo :
         # On efface les widget de la fenêtre pour passer aux stats...
@@ -470,6 +505,27 @@ def nettoyage(filename, m, P, DP) :
         menubar.add_cascade(label="Aide", menu=menu2)
         #Attribution du menu au main
         main.config(menu=menubar)
+        return stat(m,DP,P)
+
+def stat(m, DP, P) :     
+    data = pd.read_table(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.geno'+ '.distrib'+'.txt', delimiter="\t")
+
+    df=pd.DataFrame(data[['POS','G1_Total','G2_Total','G3_Total','G4_Total','G5_Total','G6_Total','G7_Total','G8_Total','G9_Total','GG_Total']])
+    #print(df.columns)
+    #exit()
+    #print(df)
+    #df = pd.DataFrame(np.random.random((5,5)), columns=["a","b","c","d","e"])
+
+    # Default heatmap: just a visualization of this square matrix
+    df = df.pivot_table(index=data[['POS']],
+    values=data[['G1_Total','G2_Total','G3_Total','G4_Total','G5_Total','G6_Total','G7_Total','G8_Total','G9_Total','GG_Total']])
+    #,columns=data[['G1','G2','G3','G4','G5','G6','G7','G8','G9','GG']])
+    #print(data)
+    #exit()
+    #print(nb_indiv)
+    p1 = sns.heatmap(df,vmin=0,vmax=250,cmap="RdBu_r")
+
+    plt.show()
 
     # Data
     #data = pd.read_table(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+ '.distrib'+'.txt', delimiter="\t")
@@ -481,14 +537,14 @@ def nettoyage(filename, m, P, DP) :
 
 #Chargement interface 
 back = Button(main, bg = orange, bd = 0 )
-back2 = Button(main, bg = orange, bd = 0)
+#back2 = Button(main, bg = orange, bd = 0)
 load = Button(main, text ='Load VCF', font = "Helevtica 16 bold", cursor="circle",command = open_vcf, bg = orangedark, fg = "white", bd = 0.2 , pady = 4, padx = 5)
 label2 = Label(main, bg=bluedark, font = "helevtica 10 italic")
 label = Label(main, text="Welcome on Kofi V1", bg = blue, font = "helevtica 10 italic") 
 
 #PLacement de l'interface
-back.place(rely = 0.33, relx = 0.36 , height = 200, width = 200 )    
-back2.place(rely = 0.4, relx = 0.4 , height = 200, width = 200 ) 
+back.place(rely = 0.4, relx = 0.4 , height = 300, width = 300 )    
+#back2.place(rely = 0.4, relx = 0.4 , height = 200, width = 200 ) 
 load.place(rely = 0.4, relx = 0.4 , height = 150, width = 150 )
 #Entête du programme
 label2.place(relheight = 0.05,relwidth = 1,rely = 0)

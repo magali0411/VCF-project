@@ -7,6 +7,9 @@ import os, sys, pathlib, argparse, re, time, threading
 from pathlib import Path
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import time
 
 #Installation de Tkinter selon les différentes versions
 try:
@@ -47,15 +50,16 @@ g7=0
 g8=0
 g9=0
 g0=0
+time = ''
 
 #Procédure de fermeture de le fenêtre princiaple
 def Exit():
-    if askyesno("Exit", "Êtes-vous sûr de vouloir quitter?"):
-        showwarning('Exit', "Fermeture de kofi") 
+    if askyesno("Exit", "Do you really want to exit kofi :'( ?"):
+        showwarning('Exit', "Exiting...see you soon") 
         main.destroy()
 
     else:
-        showinfo('Exit', 'Welcome back on kofi')
+        showinfo('Exit', 'Welcome back on kofi!')
 
 #Initailisation de la fenêtre principale
 main = Tk()
@@ -74,6 +78,22 @@ main.geometry('%dx%d+%d+%d' % (ws, hs, 0, 0))
 
 #intercepte l'evenement quit pour informer l'utilisateur, appel la fonction Exit
 main.protocol("WM_DELETE_WINDOW", Exit)
+
+
+
+# Fonction d'affichage de l'heure
+def hour():
+
+    global time1
+    # Heure actuelle du PC
+    time2 = time.strftime('%H:%M:%S')
+    # Si le temps récupéré est différent
+    if time2 != time1:
+        time1 = time2
+        clock.config(text=time2)
+    # Toute les 200ms la fonction s'appelle (récursivité) pour s'actualiser 
+    clock.after(200, tick)
+
 
 #######################################################
 ################ Ouverture du fichier! ################
@@ -134,10 +154,12 @@ def verif_opening(filepath) :
     try : 
         filename = Path(filepath)
     except :
+        loading.destroy()
         return showwarning("Warning", "Please select a file!")
 
     # Vérifie que l'utilisateur a bien choisi un fichier
     if not Path.is_file(filename):
+        loading.destroy()
         return showwarning("Warning", "Please select a file!")
 
     if showwarning :
@@ -207,15 +229,15 @@ def filtre(filename) :
     back.destroy()
     #back2.destroy()
     load.destroy()
-    info = Label(main, text = "VCF file is load.", font = "Helevtica 14 bold" , bg = "white" )
-    info2 = Label(main, font = "Helevtica 12", text ="By default, we only kept data when : \n -quality score was over 30 \n -DP (read depth) was at least 10 time highter than individual" , bg = "white")
+    info = Label(main, text = "{} is loaded.".format(filename.name), font = "Helevtica 14 bold" , bg = "white" )
+    #info2 = Label(main, font = "Helevtica 12", text ="By default, we only kept data when : \n -quality score was over 30 \n -DP (read depth) was at least 10 time highter than individual" , bg = "white")
     info.place(relwidth = 0.9,rely = 0.15)
-    info2.place(relwidth = 0.9, rely = 0.20)
+    #info2.place(relwidth = 0.9, rely = 0.20)
 
     # Création des cadres
     cadre_data = LabelFrame(main, bd=1, text = "Missing data", font = "Helevtica 14", bg = orange)
-    cadre_dp = LabelFrame(main, bd=1, text = "DP (Depth)",  bg = orange, font = "Helevtica 14")
-    cadre_gen = LabelFrame(main, bd=1, text = "Génotype",  bg = orange, font = "Helevtica 14")
+    cadre_dp = LabelFrame(main, bd=1, text = "DP (Read Depth)",  bg = orange, font = "Helevtica 14")
+    cadre_gen = LabelFrame(main, bd=1, text =  "Genotype percentage",  bg = orange, font = "Helevtica 14")
 
     #Placement des deux cadres
     cadre_data.place(relwidth = 0.9, relx= 0.05, rely = 0.3)
@@ -224,22 +246,22 @@ def filtre(filename) :
 
     #Création des logos d'informations pour chaque valeur
     def info_data() :
-
-        showinfo(title = 'Data', message = 'Les données manquantes...')
+        showinfo(title = 'Missing data', message = "KOFI missing data corresponds to missing genotypes specified with two dots separated by a slash './.'")
+        
     def info_dp() :
-        showinfo(title = 'DP', message = 'La DP ...')
+        showinfo(title = 'DP', message = 'KOFI DP corresponds to the minimum percentage of read depth per genotype')
 
     def info_gen() :
-        showinfo(title = 'Génotype', message = 'Le génotype...')
+        showinfo(title = 'Genotype percentage', message = 'KOFI Genotype percentage corresponds to the minimum percentage of genotype required with the predefined DP')
 
     #Ecritures au sein des cadres
-    l1 = Label(cadre_data, text = "Veuillez selectionner la qualité minimale (valeur numérique attendue)", bg = orange)
+    l1 = Label(cadre_data, text = " Please choose the percentage of tolerated missing data shall fall within 0-100 interval", bg = orange)
     b1 = Button(cadre_data,bitmap = 'question',fg="black", command = info_data).pack(side = RIGHT)
     l1.pack(side = LEFT)
-    l2 = Label(cadre_dp, text = "Veuillez selectionner la DP minimale (valeur numérique attendue)", bg = orange)
+    l2 = Label(cadre_dp, text = "Please choose the minimum Depth of coverage (DP) per genotype (numeric value expected)", bg = orange)
     b2 = Button(cadre_dp,bitmap = 'question', fg = "black", command = info_dp).pack(side = RIGHT)
     l2.pack(side = LEFT)
-    l3 = Label(cadre_gen, text = "Veuillez selectionner le % de génotype (valeur numérique attendue)", bg = orange)
+    l3 = Label(cadre_gen, text = "Please choose the minimum percentage of genotype required harboring the defined DP (numeric value expected)", bg = orange)
     b3 = Button(cadre_gen,bitmap = 'question',fg="black", command= info_gen).pack(side = RIGHT)
     l3.pack(side = LEFT)
 
@@ -255,7 +277,7 @@ def filtre(filename) :
     choix_DP = Spinbox(cadre_dp, from_=0, to=30, increment=5, bg="white", textvariable = def2)
     choix_DP.pack()
 
-    #Choix du % de génotype
+    #Choix du % de genotype
     def3 = StringVar(main)
     def3.set(95)
     choix_gen = Spinbox(cadre_gen, from_= 0, to=100, increment = 5, bg = "white", textvariable = def3 )
@@ -271,7 +293,7 @@ def filtre(filename) :
 
         except :
 
-            return showerror(title = "Error", message = "Numeric value expecter for DP")
+            return showerror(title = "Error", message = "Numeric value expected for DP")
 
         #Affectation ou non des de la valeur de la data
         try :
@@ -281,22 +303,22 @@ def filtre(filename) :
 
         except :
 
-            return showerror(title = "Error", message = "Numeric value expecter for missing data")
+            return showerror(title = "Error", message = "Numeric value expected for missing data")
             
-        #Affectation ou non des de la valeur du génotype
+        #Affectation ou non des de la valeur du genotype
 
         try :
             P = float(choix_gen.get())
             #Desactivation de la séléction
             choix_gen.configure(state='disabled')
         except :
-            return showerror(title = "Error", message = "Numeric value expecter for genotpye")
+            return showerror(title = "Error", message = "Numeric value expected for genotpye")
 
         #Passage au nettoyage du fichier
         nettoyage(filename,m,P,DP)
 
     #Création et placement du bouton de validation    
-    valide = Button(main, relief = 'groove', bg = bluedark, fg = "white",font = "Helevtica 12", text = "Bloquer les valeurs", command = val)
+    valide = Button(main, relief = 'groove', bg = bluedark, fg = "white",font = "Helevtica 12", text = "Validate", command = val)
     valide.place(relx = 0.8, rely= 0.8 )
 
 ####################################################################
@@ -310,7 +332,7 @@ def nettoyage(filename, m, P, DP) :
     nettoyage = Toplevel(main, cursor = "watch", bg = blue)
     nettoyage.geometry("%dx%d%+d%+d" % (ws//3,hs//3,ws//3,hs//3))  
     nettoyage.title =("Kofi")
-    lab=Label(nettoyage, text="Création d'un nouveau fichier vcf \n et d'un nouveau \n fichier de genotypage",fg = "white", font = ("Helvetica", 18, "bold"), bg = blue)
+    lab=Label(nettoyage, text="\n Creating a new filtred vcf file with the choosen filtred. \n \n Conversion of the filtred vcf in tabular genotyping file.\n \n Creating a genotype distribution file.",fg = "white", font = ("Helvetica", 18, "bold"), bg = blue)
     lab.pack()
 
      ####### Etape 1.1 nettoyage & filtres   ####### 
@@ -470,10 +492,6 @@ def nettoyage(filename, m, P, DP) :
                 else:
                     g0+=1
                     konvfile.write("\t"+mag.group(0))
-        #                kogefile.write("\t"+mag.group(0)+"\t"+str(g0))
-                    
-
-                print("\n",gg)
 
             
             kogefile.write("\t"+ref+"/"+ref+"\t"+str(gg)+"\t"+ref+"/"+alt+"\t"+str(g2)+"\t"+alt+"/"+ref+"\t"+str(g3)+
@@ -483,7 +501,7 @@ def nettoyage(filename, m, P, DP) :
     konvfile.close()
     kogefile.close()
 
-    showinfo(title="files created", message = "{} \ncreated on your main vcf respository.\nThe first is a new version of your vcf that contains only data that match your filters \nThe second one is a version mor readable of the first one \nAnd the third one is a usefull file to make stat".format(nameko+'\n'+namekonv +'\n'+namekoge))
+    showinfo(title="files created", message = "Created on your working directory : \n{}".format('-'+nameko+'\n'+'-'+namekonv +'\n'+'-'+namekoge))
     if showinfo :
         # On efface les widget de la fenêtre pour passer aux stats...
         for c in main.winfo_children():
@@ -491,7 +509,7 @@ def nettoyage(filename, m, P, DP) :
             c.destroy() 
         # ... mais on garde le menu et l'entête du programme 
         label2 = Label(main, bg=bluedark, font = "helevtica 10 italic")
-        label = Label(main, text="Welcome on Kofi V1", bg = blue, font = "helevtica 10 italic") 
+        label = Label(main, text="Welcome on Kofi.dev", bg = blue, font = "helevtica 10 italic") 
         label2.place(relheight = 0.05,relwidth = 1,rely = 0)
         label.place(relwidth = 1, rely = 0  )
 
@@ -505,31 +523,23 @@ def nettoyage(filename, m, P, DP) :
         menubar.add_cascade(label="Aide", menu=menu2)
         #Attribution du menu au main
         main.config(menu=menubar)
-        return stat(m,DP,P)
+        return stat(m,DP,P, filename)
 
-def stat(m, DP, P) :     
+        tick()
+
+def stat(m, DP, P,filename) : 
+
     data = pd.read_table(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.geno'+ '.distrib'+'.txt', delimiter="\t")
 
     df=pd.DataFrame(data[['POS','G1_Total','G2_Total','G3_Total','G4_Total','G5_Total','G6_Total','G7_Total','G8_Total','G9_Total','GG_Total']])
-    #print(df.columns)
-    #exit()
-    #print(df)
-    #df = pd.DataFrame(np.random.random((5,5)), columns=["a","b","c","d","e"])
 
     # Default heatmap: just a visualization of this square matrix
     df = df.pivot_table(index=data[['POS']],
     values=data[['G1_Total','G2_Total','G3_Total','G4_Total','G5_Total','G6_Total','G7_Total','G8_Total','G9_Total','GG_Total']])
-    #,columns=data[['G1','G2','G3','G4','G5','G6','G7','G8','G9','GG']])
-    #print(data)
-    #exit()
-    #print(nb_indiv)
+
     p1 = sns.heatmap(df,vmin=0,vmax=250,cmap="RdBu_r")
 
     plt.show()
-
-    # Data
-    #data = pd.read_table(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+ '.distrib'+'.txt', delimiter="\t")
-    #print(data)
 
 #############################################################################
 ################# INTERFACE FENETRE PRINCIPALE ##############################
@@ -540,7 +550,7 @@ back = Button(main, bg = orange, bd = 0 )
 #back2 = Button(main, bg = orange, bd = 0)
 load = Button(main, text ='Load VCF', font = "Helevtica 16 bold", cursor="circle",command = open_vcf, bg = orangedark, fg = "white", bd = 0.2 , pady = 4, padx = 5)
 label2 = Label(main, bg=bluedark, font = "helevtica 10 italic")
-label = Label(main, text="Welcome on Kofi V1", bg = blue, font = "helevtica 10 italic") 
+label = Label(main, text="Welcome on Kofi.dev", bg = blue, font = "helevtica 10 italic") 
 
 #PLacement de l'interface
 back.place(rely = 0.4, relx = 0.4 , height = 300, width = 300 )    
@@ -563,6 +573,12 @@ menubar.add_cascade(label="Aide", menu=menu2)
 
 #Attribution du menu au main
 main.config(menu=menubar)
+
+# Placement de l'horloge
+clock = Label(main, font=('times', 20, 'bold'), bg='white', fg= bluedark)
+clock.place(rely = 0.85, relx = 0.85)
+time1 = ''
+tick()
 
 
 main.mainloop()

@@ -1,7 +1,18 @@
 # VCF-project: KOFI (toolKit fOr vcF analysIs) ....
 ==========================
 
-KOFI is a software performing ......
+KOFI is a software performing vcf analyses for you. The main goal of this tool is to facilitate the understanding of all the data. 
+After loading your file, we perform data filtration according to the following criteria : 
+- Quality of the read is over 30
+- General DP is at least ten times highter than the number of individuals
+- Missing data is below 5%
+- Genotype DP is over 10
+- Percentage of genotype is over 95%
+
+The third last values can be changed manually at the start of the application. 
+
+There are three out-coming files : 
+... 
 
 *[Installation manual](https://github.com/emiracherif/VCF-project/blob/master/INSTALLmd)
 

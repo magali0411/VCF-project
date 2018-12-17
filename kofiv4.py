@@ -259,39 +259,6 @@ for line in ko :
 konvfile.close()
 kogefile.close()
 
-# Dictionnaire #
-
-kogefile=open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+ '.distrib'+'.txt','r')
-
-for line in kogefile: 
-
-    keys= re.search("LG(\d+)_(\d+)", line)
-    var = re.search("\d+\s([a-zA-Z]+)\s([a-zA-Z]+,?([a-zA-Z]+)?)",line)
-
-    if keys :
-
-        chrom = keys.group(1)
-        pos = keys.group(2)
-
-        ref = var.group(1)
-        alt = var.group(2)
-
-        # print('\n', chrom, pos)
-
-        if chrom in dico.keys():
-
-            #if pos in dico.keys() :
-
-            dico[chrom][pos] = (ref, alt)
-
-            #else :
-            #    dico[chrom][pos] = [ref, alt]
-        else :
-            dico[chrom] = {}
-            dico[chrom][pos] = [ref, alt]
-
-print(dico)
-
 data = pd.read_table(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+ '.distrib'+'.txt', delimiter="\t")
 
 df=pd.DataFrame(data[['POS','CHROM','aHo1_Total','aHo2_Total','aHo3_Total','bHe1_Total','bHe2_Total','bHe3_Total','mD_Total']])

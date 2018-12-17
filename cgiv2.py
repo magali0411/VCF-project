@@ -34,24 +34,6 @@ bluedark = '#61a5b2'
 grey = "#E3E2E1"
 
 
-#Initialisation des variables
-
-compteur = 0 
-m = ""
-DP = ""
-P = ""
-g1=0
-g2=0
-g3=0
-g4=0
-g5=0
-g6=0
-g7=0
-g8=0
-g9=0
-g0=0
-time = ''
-
 #Procédure de fermeture de le fenêtre princiaple
 def Exit():
     if askyesno("Exit", "Do you really want to exit kofi :'( ?"):
@@ -80,8 +62,8 @@ main.geometry('%dx%d+%d+%d' % (ws, hs, 0, 0))
 main.protocol("WM_DELETE_WINDOW", Exit)
 
 
-
 # Fonction d'affichage de l'heure
+
 def hour():
 
     global time1
@@ -92,7 +74,7 @@ def hour():
         time1 = time2
         clock.config(text=time2)
     # Toute les 200ms la fonction s'appelle (récursivité) pour s'actualiser 
-    clock.after(200, tick)
+    clock.after(200, hour)
 
 
 #######################################################
@@ -108,6 +90,10 @@ def open_vcf() :
 
 
 # Fonction de vérification sur le fichier sélectionnée
+
+
+compteur = 0 
+
 def verif_opening(filepath) :
 
     ######### Initatilisation de la toplevel ##########
@@ -223,6 +209,10 @@ def verif_opening(filepath) :
         return showerror("Error", "Oops, wrong extention!")
 
 ############# Mise en place des filtres ##################
+
+m = ""
+DP = ""
+P = ""
 
 def filtre(filename) :
     main.configure(bg="white")
@@ -378,11 +368,10 @@ def nettoyage(filename, m, P, DP) :
 
             #Ecriture de l'entete du fichier de geno distrib kogefile
             kogefile.write("\n"+"SNP_ID"+"\t"+"CHROM"+"\t"+"POS"+"\t"+"REF"+"\t"+"ALT"+
-                    "\t"+"G1"+"\t"+"G1_Total"+"\t"+"G2"+"\t"+"G2_Total"+"\t"+"G3"+
-                    "\t"+"G3_Total"+"\t"+"G4"+"\t"+"G4_Total"+"\t"+"G5"+"\t"+"G5_Total"+
-                    "\t"+"G6"+"\t"+"G6_Total"+"\t"+"G7"+"\t"+"G7_Total"+"\t"+"G8"+"\t"+"G8_Total"+
-                    "\t"+"G9"+"\t"+"G9_Total"+"\t"+"GG"+"\t"+"GG_Total"
-                )
+                           "\t"+"Ho1"+"\t"+"aHo1_Total"+"\t"+"Ho2"+"\t"+"aHo2_Total"+"\t"+"Ho3"+
+                           "\t"+"aHo3_Total"+"\t"+"He1"+"\t"+"bHe1_Total"+"\t"+"He2"+"\t"+"bHe2_Total"+
+                           "\t"+"He3"+"\t"+"bHe3_Total"+"\t"+"MD"+"\t"+"mD_Total"
+                           )
 
 
     #Extraction des qualités et DP générales
@@ -446,62 +435,56 @@ def nettoyage(filename, m, P, DP) :
             alts=geno.group(5)
             # print(ref+"/"+alt)
             geno_iterator = finditer("(.)\/(.)", line)
-            gg=1
+            g1=1
             g2=1
             g3=1
             g4=1
             g5=1
             g6=1
-            g7=1
-            g8=1
-            g9=1
-            g0=1
+            gg=1
 
             for mag in geno_iterator:
+
+
                 if mag.group(0)=="0/0" or mag.group(0)=="0|0":
                     konvfile.write("\t"+ref+"/"+ref)
-        #                print(ref+"/"+ref)
-                    gg+=1
-        #                kogefile.write("\t"+ref+"/"+ref+"\t"+str(g1))
+                    g1+=1
                 
-                elif mag.group(0)=="0/1"or mag.group(0)=="0|1":
-                    g2+=1
-                    konvfile.write("\t"+ref+"/"+alt)
-        #                kogefile.write("\t"+ref+"/"+alt+"\t"+str(g1))
-                elif mag.group(0)=="1/0"or mag.group(0)=="1|0":
-                    g3+=1
-                    konvfile.write("\t"+alt+"/"+ref)
-                elif mag.group(0)=="0/2"or mag.group(0)=="0|2":
-                    g4+=1
-                    konvfile.write("\t"+ref+"/"+alts)
-                elif mag.group(0)=="2/0"or mag.group(0)=="2|0":
-                    g5+=1
-                    konvfile.write("\t"+alts+"/"+ref) 
-                elif mag.group(0)=="1/1"or mag.group(0)=="1|1":
-                    g6+=1
-                    konvfile.write("\t"+alt+"/"+alt)
-                elif mag.group(0)=="1/2"or mag.group(0)=="1|2":
-                    g7+=1
-                    konvfile.write("\t"+alt+"/"+alts)
-                elif mag.group(0)=="2/1"or mag.group(0)=="2|1":
-                    g8+=1
-                    konvfile.write("\t"+alts+"/"+alt)
-                elif mag.group(0)=="2/2"or mag.group(0)=="2|2":
-                    g9+=1
-                    konvfile.write("\t"+alts+"/"+alts)
-                else:
-                    g0+=1
-                    konvfile.write("\t"+mag.group(0))
-
             
-            kogefile.write("\t"+ref+"/"+ref+"\t"+str(gg)+"\t"+ref+"/"+alt+"\t"+str(g2)+"\t"+alt+"/"+ref+"\t"+str(g3)+
-                                    "\t"+ref+"/"+alts+"\t"+str(g4)+"\t"+alts+"/"+ref+"\t"+str(g5)+"\t"+alt+"/"+alt+"\t"+str(g6)+
-                                    "\t"+alt+"/"+alts+"\t"+str(g7)+"\t"+alts+"/"+alt+"\t"+str(g8)+"\t"+alts+"/"+alts+"\t"+str(g9)+
-                                    "\t"+mag.group(0)+"\t"+str(g0))
+                elif mag.group(0)=="1/1"or mag.group(0)=="1|1":
+                    g2+=1
+                    konvfile.write("\t"+alt+"/"+alt)
+            
+                elif mag.group(0)=="2/2"or mag.group(0)=="2|2":
+                    g3+=1
+                    konvfile.write("\t"+alts+"/"+alts)
+
+                elif mag.group(0) in ('0/1','0|1', '1/0','1|0'):
+                    g4+=1
+                    konvfile.write("\t"+ref+"/"+alt)
+
+                elif mag.group(0) in ('0/2','0|2', '2/0','2|0'):
+                    g5+=1
+                    konvfile.write("\t"+ref+"/"+alts)
+
+                elif mag.group(0) in ('1/2','1|2', '2/1','2|1'):
+                    g6+=1
+                    konvfile.write("\t"+alt+"/"+alts)
+
+                else:
+                    gg+=1
+                    konvfile.write("\t"+mag.group(0))
+                
+
+        
+            kogefile.write("\t"+ref+"/"+ref+"\t"+str(g1)+"\t"+alt+"/"+alt+"\t"+str(g2)+"\t"+alts+"/"+alts+"\t"+str(g3)+
+                               "\t"+ref+"/"+alt+"\t"+str(g4)+"\t"+ref+"/"+alts+"\t"+str(g5)+"\t"+alt+"/"+alts+"\t"+str(g6)+
+                               "\t"+mag.group(0)+"\t"+str(gg))
     konvfile.close()
     kogefile.close()
 
     showinfo(title="files created", message = "Created on your working directory : \n{}".format('-'+nameko+'\n'+'-'+namekonv +'\n'+'-'+namekoge))
+    
     if showinfo :
         # On efface les widget de la fenêtre pour passer aux stats...
         for c in main.winfo_children():
@@ -512,6 +495,8 @@ def nettoyage(filename, m, P, DP) :
         label = Label(main, text="Welcome on Kofi.dev", bg = blue, font = "helevtica 10 italic") 
         label2.place(relheight = 0.05,relwidth = 1,rely = 0)
         label.place(relwidth = 1, rely = 0  )
+        thend = Label(main, text = "Thanks for using KOFI!", bg = "white", fg = bluedark, font = 'helevtica 32 bold')
+        thend.place(rely = 0.4, relx = 0.4)
 
         # Création d'un menu sur la fenêtre
         menubar = Menu(main)
@@ -529,13 +514,18 @@ def nettoyage(filename, m, P, DP) :
 
 def stat(m, DP, P,filename) : 
 
+    #Utilisation de pandas pour réaliser un dataframe 
     data = pd.read_table(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.geno'+ '.distrib'+'.txt', delimiter="\t")
 
-    df=pd.DataFrame(data[['POS','G1_Total','G2_Total','G3_Total','G4_Total','G5_Total','G6_Total','G7_Total','G8_Total','G9_Total','GG_Total']])
-
+    df=pd.DataFrame(data[['POS','CHROM','aHo1_Total','aHo2_Total','aHo3_Total','bHe1_Total','bHe2_Total','bHe3_Total','mD_Total']])
+ 
     # Default heatmap: just a visualization of this square matrix
+
     df = df.pivot_table(index=data[['POS']],
-    values=data[['G1_Total','G2_Total','G3_Total','G4_Total','G5_Total','G6_Total','G7_Total','G8_Total','G9_Total','GG_Total']])
+                        values=data[['POS','aHo1_Total','aHo2_Total','aHo3_Total','bHe1_Total','bHe2_Total','bHe3_Total','mD_Total']])
+#                        columns=data[['G1','G2','G3','G4','G5','G6','G7','G8','G9','G10']])
+
+
 
     p1 = sns.heatmap(df,vmin=0,vmax=250,cmap="RdBu_r")
 
@@ -578,7 +568,7 @@ main.config(menu=menubar)
 clock = Label(main, font=('times', 20, 'bold'), bg='white', fg= bluedark)
 clock.place(rely = 0.85, relx = 0.85)
 time1 = ''
-tick()
+hour()
 
 
 main.mainloop()

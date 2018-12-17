@@ -6,10 +6,19 @@ ins = 0
 dell = 0
 sub = 0
 
-kogefile=open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+ '.distrib'+'.txt','r')
-   
-for line in kogefile: 
+import os, sys, pathlib, argparse, re
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from pathlib import Path
 
+filename=sys.argv[1]
+kogefile=open(filename, 'r')
+    #.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+ '.distrib'+'.txt','r')
+   
+dico = {}
+for line in kogefile: 
 
     #keys cherche le chromosome et la position, var cherche l'alt et le ref
     keys= re.search("LG(\d+)_(\d+)", line)
@@ -33,7 +42,7 @@ for line in kogefile:
         for char in ref :
             count +=1
 
-        #Comptage des caract-res de l'alt
+        #Comptage des caractères de l'alt (si il y'en a plusieurs, on prend en compte uniquement le premier)
         for char in alt :
             co += 1
 
@@ -58,12 +67,44 @@ for line in kogefile:
             #    dico[chrom][pos] = [ref, alt]
         else :
             dico[chrom] = {}
-            dico[chrom][pos] = [ref, alts]
+            dico[chrom][pos] = (ref, alts)
 
-print(dico)
+#print(dico)
+
+
 print ('\n sub:' + str(sub) +', ins:' + str(ins) +', del:' + str(dell))
+
 # Taux de mutation
 tsub = (sub/ (sub+ins+dell)) * 100
 tins = (ins/ (sub+ins+dell)) * 100
 tdel = (dell/ (sub+ins+dell)) * 100
+
 print('\n ' + str(tsub) + ' ' +str(tins) +' ' + str(tdel))
+
+nb_pos = 1
+#Comptages de toutes les positions
+for keys in dico[chrom].items():
+    #print(keys)
+    nb_pos += 1
+
+print(nb_pos)
+
+# Comptage des mutations par chromosomes 
+nb_mut = 1
+liste_ch = []
+
+for item in dico :
+    #print(item)
+    nb_mut = 1
+    for posi in dico[item] :
+        #print(posi)
+        nb_mut +=1
+
+    #print('\n chr:' + str(item) + ', mut:' + str(nb_mut))
+    liste_ch.append(str(item))
+    liste_ch.append(str(nb_mut))
+    #print(nb_mut)
+    #resu =(nb_mut/ nb_pos )*100
+    #print(resu)
+
+print(liste_ch)

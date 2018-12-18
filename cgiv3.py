@@ -10,6 +10,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import time
+import webbrowser
+
 
 #Installation de Tkinter selon les différentes versions
 try:
@@ -76,6 +78,12 @@ def hour():
     # Toute les 200ms la fonction s'appelle (récursivité) pour s'actualiser 
     clock.after(200, hour)
 
+# Fonction pour ouvrir le manuel
+new = 1
+url = "https://github.com/emiracherif/VCF-project/blob/master/README.md"
+
+def openweb():
+    webbrowser.open(url,new=new)
 
 #######################################################
 ################ Ouverture du fichier! ################
@@ -136,7 +144,6 @@ def verif_opening(filepath) :
         
     # On récupère le chemin du fichier dans une variable si le fichier existe 
 
-
     try : 
         filename = Path(filepath)
     except :
@@ -157,18 +164,18 @@ def verif_opening(filepath) :
     ################################################################################
     # Normalement l'utilisteur choisi forcément un fichier de type VCF
     # des doubles vérifications sont tout de même effectuées
-    ###########################################################################""
+    ###########################################################################
 
-    #Si le fichier séléctionné n'existe pas 
+    #Si le fichier séléctionné n'existe pas, ou plus 
     if not filename.exists():
 
         #Exit de la fonction de chargement, affichage d'une erreur
-        return showerror("Error", "Oops, this file dosn't exist!")
+        return showerror("Error", "Oops, this file dosn't exist anymore!")
 
     #Sinon, affichage que c'est ok!
     prog.configure(text = "Path OK! \n File OK!")
 
-    # Appel du compteur
+    # Appel du compteur 
     compteur_sec()
 
     ################# Ouverture et vérification à l'intérieur du fichier ####################
@@ -197,39 +204,44 @@ def verif_opening(filepath) :
 
     ### Vérifie que c'est bien un vcf
     if filename.suffix==".vcf":
+
         #Ouverture du fichier dans la variable fd
         fd=filename.read_text()
+
         # Retour positif
         prog.configure(text = "Path OK! \n File OK! \n .vcf OK!")
+
         # Affichage du bouton pour vérifier l'intérieur du fichier
         deeper = Button(loading, relief = 'groove', text="Let's go deeper", command = next,fg = "white", cursor='hand2', bg = orangedark)
         deeper.grid(sticky = 'n') #Affiche le bouton qui lance l'analyse à l'intérieur du fichier
+    
     else:
         # On quitte la fonction et donc la toplevel avec un message d'erreur 
         return showerror("Error", "Oops, wrong extention!")
 
+##########################################################
 ############# Mise en place des filtres ##################
+##########################################################
 
 m = ""
 DP = ""
 P = ""
 
 def filtre(filename) :
+
+    # Chargement de l'interface
     main.configure(bg="white")
     back.destroy()
-    #back2.destroy()
     load.destroy()
     info = Label(main, text = "{} is loaded.".format(filename.name), font = "Helevtica 14 bold" , bg = "white" )
-    #info2 = Label(main, font = "Helevtica 12", text ="By default, we only kept data when : \n -quality score was over 30 \n -DP (read depth) was at least 10 time highter than individual" , bg = "white")
     info.place(relwidth = 0.9,rely = 0.15)
-    #info2.place(relwidth = 0.9, rely = 0.20)
 
-    # Création des cadres
+    # Création des cadres de séléctions
     cadre_data = LabelFrame(main, bd=1, text = "Missing data", font = "Helevtica 14", bg = orange)
     cadre_dp = LabelFrame(main, bd=1, text = "DP (Read Depth)",  bg = orange, font = "Helevtica 14")
     cadre_gen = LabelFrame(main, bd=1, text =  "Genotype percentage",  bg = orange, font = "Helevtica 14")
 
-    #Placement des deux cadres
+    #Placement des cadres
     cadre_data.place(relwidth = 0.9, relx= 0.05, rely = 0.3)
     cadre_dp.place(relwidth = 0.9,relx = 0.05, rely = 0.5)
     cadre_gen.place(relwidth = 0.9,relx = 0.05, rely= 0.7 )
@@ -255,7 +267,8 @@ def filtre(filename) :
     b3 = Button(cadre_gen,bitmap = 'question',fg="black", command= info_gen).pack(side = RIGHT)
     l3.pack(side = LEFT)
 
-    #Choix des données manquantes
+    #Choix des données manquantes avec attribution d'une valeur par défaut
+
     def1 = StringVar(main)
     def1.set(5)
     choix_data = Spinbox(cadre_data, from_=0, to=50, increment=5, bg="white", textvariable = def1)
@@ -275,14 +288,13 @@ def filtre(filename) :
 
     #Validation des valeurs 
     def val() :
+
         #Affectation ou non des de la valeur de la DP
         try : 
             DP = int(choix_DP.get())
             #Desactivation de la séléction
             choix_DP.configure(state = 'disabled')
-
         except :
-
             return showerror(title = "Error", message = "Numeric value expected for DP")
 
         #Affectation ou non des de la valeur de la data
@@ -290,13 +302,10 @@ def filtre(filename) :
             m = float(choix_data.get())
             #Desactivation de la séléction
             choix_data.configure(state='disabled')
-
         except :
-
             return showerror(title = "Error", message = "Numeric value expected for missing data")
             
         #Affectation ou non des de la valeur du genotype
-
         try :
             P = float(choix_gen.get())
             #Desactivation de la séléction
@@ -325,9 +334,10 @@ def nettoyage(filename, m, P, DP) :
     lab=Label(nettoyage, text="\n Creating a new filtred vcf file with the choosen filtred. \n \n Conversion of the filtred vcf in tabular genotyping file.\n \n Creating a genotype distribution file.",fg = "white", font = ("Helvetica", 18, "bold"), bg = blue)
     lab.pack()
 
-     ####### Etape 1.1 nettoyage & filtres   ####### 
+    ####### Etape 1.1 nettoyage & filtres   ####### 
 
     nb_indiv = 0
+
     #Creation d'un nouveau fichier vcf
     kofile = open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.vcf','a')
     nameko = filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.vcf'
@@ -343,7 +353,7 @@ def nettoyage(filename, m, P, DP) :
     #Ecriture de l'entête dans le nouveau vcf kofile
     from re import finditer
     fd = open(filename,"r")
-    #print(filename)
+
     for line in fd : 
     
         headline = re.search("^##.+",line)
@@ -363,7 +373,6 @@ def nettoyage(filename, m, P, DP) :
             konvfile.write("\n"+"SNP_ID"+"\t"+"CHROM"+"\t"+"POS"+"\t"+"REF"+"\t"+"ALT")
             liste_ind=liste[9:]
             for i in liste_ind:
-                # print(indiv)
                 konvfile.write("\t"+i)
 
             #Ecriture de l'entete du fichier de geno distrib kogefile
@@ -382,7 +391,7 @@ def nettoyage(filename, m, P, DP) :
            
             #Filtre sur la qualité et la DP générale
             if (float(qual.group(0)) > 30 and int(dp_g.group(2))>= (int(nb_indiv)*10)) :
-                # exit()
+
                 
                 #Filtre sur un pourcentage max de données manquantes tolérées 
                 missing_iterator = finditer("\.\/\.", line)
@@ -392,7 +401,6 @@ def nettoyage(filename, m, P, DP) :
 
                 # Condition sur le pourcentage de de données manquantes tolérées choisi par l'utilisateur ou celle par défaut
                 if float((missing_count*100)/nb_indiv)<=float(m):
-                #float((missing_count*100)/nb_indiv)<=float(m):
 
                     dp_geno_it=finditer(":(\d+):", line)
                     dp_geno_count=0
@@ -416,13 +424,12 @@ def nettoyage(filename, m, P, DP) :
 
 # Remplissage du geno file 
     for line in ko :
-    #print(line)
+
         geno = re.search("(^[a-zA-Z]+\d+)\s+(\d+)\s+.+\s+([a-zA-Z]+)\s+([a-zA-Z]),*([a-zA-Z]*)\s",line)
     
-    
+        # Si la ligne n'est pas dans l'entête
         if not line.startswith('\n') and not line.startswith('#')  :
             head=line.split("\t")
-        # print(head[0:5])
             konvfile.write("\n"+head[0]+"_"+head[1]+"\t"+head[0]+"\t"+head[1]+"\t"+head[3]+"\t"+head[4])
             kogefile.write("\n"+head[0]+"_"+head[1]+"\t"+head[0]+"\t"+head[1]+"\t"+head[3]+"\t"+head[4])
     
@@ -433,7 +440,7 @@ def nettoyage(filename, m, P, DP) :
             ref=geno.group(3)
             alt=geno.group(4)
             alts=geno.group(5)
-            # print(ref+"/"+alt)
+
             geno_iterator = finditer("(.)\/(.)", line)
             g1=1
             g2=1
@@ -443,14 +450,14 @@ def nettoyage(filename, m, P, DP) :
             g6=1
             gg=1
 
+
             for mag in geno_iterator:
 
 
                 if mag.group(0)=="0/0" or mag.group(0)=="0|0":
                     konvfile.write("\t"+ref+"/"+ref)
                     g1+=1
-                
-            
+                 
                 elif mag.group(0)=="1/1"or mag.group(0)=="1|1":
                     g2+=1
                     konvfile.write("\t"+alt+"/"+alt)
@@ -487,9 +494,8 @@ def nettoyage(filename, m, P, DP) :
     
     if showinfo :
         # On efface les widget de la fenêtre pour passer aux stats...
-        for c in main.winfo_children():
-
-            c.destroy() 
+        for chose in main.winfo_children():
+            chose.destroy() 
         # ... mais on garde le menu et l'entête du programme 
         label2 = Label(main, bg=bluedark, font = "helevtica 10 italic")
         label = Label(main, text="Welcome on Kofi.dev", bg = blue, font = "helevtica 10 italic") 
@@ -501,16 +507,18 @@ def nettoyage(filename, m, P, DP) :
         # Création d'un menu sur la fenêtre
         menubar = Menu(main)
         menu1 = Menu(menubar, tearoff=0)
-        menu1.add_command(label="Quitter", command=Exit)
-        menubar.add_cascade(label="Fichier", menu=menu1)
-        menu2 = Menu(menubar, tearoff=0)
-        menu2.add_command(label="A propos")
-        menubar.add_cascade(label="Aide", menu=menu2)
+        #menu1.add_command(label="About kofi")
+        menu1.add_command(label="User guide", command = openweb)
+        menubar.add_cascade(label="Help", menu=menu1)
         #Attribution du menu au main
         main.config(menu=menubar)
         return stat(m,DP,P, filename)
-
+        # Placement de l'heure
         tick()
+
+################################################
+########### Affichage de l'heatmap #############
+################################################
 
 def stat(m, DP, P,filename) : 
 
@@ -523,8 +531,6 @@ def stat(m, DP, P,filename) :
 
     df = df.pivot_table(index=data[['POS']],
                         values=data[['POS','aHo1_Total','aHo2_Total','aHo3_Total','bHe1_Total','bHe2_Total','bHe3_Total','mD_Total']])
-#                        columns=data[['G1','G2','G3','G4','G5','G6','G7','G8','G9','G10']])
-
 
 
     p1 = sns.heatmap(df,vmin=0,vmax=250,cmap="RdBu_r")
@@ -625,15 +631,12 @@ label2.place(relheight = 0.05,relwidth = 1,rely = 0)
 label.place(relwidth = 1, rely = 0  )
 
 # Création d'un menu sur la fenêtre
+
 menubar = Menu(main)
-
 menu1 = Menu(menubar, tearoff=0)
-menu1.add_command(label="Quitter", command=Exit)
-menubar.add_cascade(label="Fichier", menu=menu1)
-
-menu2 = Menu(menubar, tearoff=0)
-menu2.add_command(label="A propos")
-menubar.add_cascade(label="Aide", menu=menu2)
+#menu1.add_command(label="About kofi")
+menu1.add_command(label="User guide", command = openweb)
+menubar.add_cascade(label="Help", menu=menu1)
 
 #Attribution du menu au main
 main.config(menu=menubar)

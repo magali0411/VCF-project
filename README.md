@@ -13,7 +13,7 @@ Il se décline en deux versions différentes :
 
 python3
 
-La dernière version des packages suivants doit être installée sur votre machine:
+Les dernières versions des packages suivants doit être installées sur votre machine:
 os, sys, pathlib, argparse, re, numpy, pandas, seaborn, matplotlib.pyplot
 
 

@@ -13,15 +13,12 @@ Il se décline en deux versions différentes :
 
 python3
 
-Les packages suivants doivent être installés sur votre machine et à jour :
+La dernière version des packages suivants doit être installée sur votre machine:
 os, sys, pathlib, argparse, re, numpy, pandas, seaborn, matplotlib.pyplot
-
-Ils peuvent être installés et mis à jour un à un de la manière suivante:
 
 
 ```
 pip install --upgrade *package name*
-
 ```
 
 

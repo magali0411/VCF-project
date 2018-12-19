@@ -4,15 +4,20 @@
 > os
 > sys
 > re
+> pathlib
+> argparse
+> re
 
 ### Softwares/Modules
 > python3-tk
 > pandas 0.23.4
+> numpy
+> seaborn
+> matplotlibe.pylot
 
-
-
-
-
+```
+pip install --upgrade *module name*
+```
 
 
 ### Installation 

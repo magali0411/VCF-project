@@ -13,7 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
  
 # Create a dataset (fake)
-data = pd.read_table('all-phoenix-dattier-LG15-17-m5-DP10-P95.geno.distrib.txt', delimiter="\t")
+data = pd.read_table('test-m5-DP10-P95.geno.distrib.txt', delimiter="\t")
 #df=pd.DataFrame(data[['POS','G1','G2','G3','G4','G5','G6','G7','G8','G9','G10','G1_Total','G1_Total','G2_Total','G3_Total','G4_Total','G5_Total','G6_Total','G7_Total','G8_Total','G9_Total','G10_Total']])
 
 df=pd.DataFrame(data[['POS','G1_Total','G2_Total','G3_Total','G4_Total','G5_Total','G6_Total','G7_Total','G8_Total','G9_Total','GG_Total']])
@@ -28,7 +28,14 @@ df = df.pivot_table(index=data[['POS']],
 #                        columns=data[['G1','G2','G3','G4','G5','G6','G7','G8','G9','G10']])
 #print(data)
 #exit()
-p1 = sns.heatmap(df,vmin=0,cmap="RdBu_r")
-sns.palplot(sns.diverging_palette(220, 20, n=7))
+p1 = sns.heatmap(df,vmin=0,vmax=250,cmap="RdBu_r")
+# p1 = sns.heatmap(df,robust,x='Positions',y='Genotypes',cmap="RdBu_r")
+# tips = sns.load_dataset("tips")
+# print(tips)
+
+# p1 = sns.catplot(x='POS', y='genotype', jitter=False, data=df)
+
+
+# sns.palplot(sns.diverging_palette(220, 20, n=7))
 plt.show()
 #print()

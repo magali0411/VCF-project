@@ -197,7 +197,7 @@ for line in ko :
         alts=geno.group(5)
         # print(ref+"/"+alt)
         geno_iterator = finditer("(.)\/(.)", line)
-        gg=1
+        g1=1
         g2=1
         g3=1
         g4=1
@@ -206,13 +206,13 @@ for line in ko :
         g7=1
         g8=1
         g9=1
-        g0=1
+        gg=1
 
         for mag in geno_iterator:
             if mag.group(0)=="0/0" or mag.group(0)=="0|0":
                 konvfile.write("\t"+ref+"/"+ref)
 #                print(ref+"/"+ref)
-                gg+=1
+                g1+=1
 #                kogefile.write("\t"+ref+"/"+ref+"\t"+str(g1))
             
             elif mag.group(0)=="0/1"or mag.group(0)=="0|1":
@@ -241,7 +241,7 @@ for line in ko :
                 g9+=1
                 konvfile.write("\t"+alts+"/"+alts)
             else:
-                g0+=1
+                gg+=1
                 konvfile.write("\t"+mag.group(0))
 #                kogefile.write("\t"+mag.group(0)+"\t"+str(g0))
                 
@@ -252,7 +252,7 @@ for line in ko :
         kogefile.write("\t"+ref+"/"+ref+"\t"+str(gg)+"\t"+ref+"/"+alt+"\t"+str(g2)+"\t"+alt+"/"+ref+"\t"+str(g3)+
                                "\t"+ref+"/"+alts+"\t"+str(g4)+"\t"+alts+"/"+ref+"\t"+str(g5)+"\t"+alt+"/"+alt+"\t"+str(g6)+
                                "\t"+alt+"/"+alts+"\t"+str(g7)+"\t"+alts+"/"+alt+"\t"+str(g8)+"\t"+alts+"/"+alts+"\t"+str(g9)+
-                               "\t"+mag.group(0)+"\t"+str(g0))
+                               "\t"+mag.group(0)+"\t"+str(gg))
 konvfile.close()
 kogefile.close()
 

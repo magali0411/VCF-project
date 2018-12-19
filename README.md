@@ -5,7 +5,7 @@
 
 ## Description
 
-KOFI est un logiciel d'analyse et de visualisation de données VCF. Son objectif principal est de filtrer les données de génotypage d'un fichier vcf pour en extraire les informations utiles à son analyse. 
+KOFI est un outil écrit en Python d'analyse et de visualisation de données VCF. Son objectif principal est de filtrer les données de génotypage d'un fichier vcf pour en extraire les informations utiles à son analyse. 
 
 ![](images/kofiOverview.png)
 =============================

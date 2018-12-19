@@ -17,7 +17,7 @@ Pour réalliser les analyses l'utilisateur aura le choix de le faire soit avec:
 
 KOFI propose à l'utilisateur de fixer:
 - les données manquantes tolérées (la valeur par défaut est fixée à 5%)
-- la profondeur minimale de "reads" (DP) par individu généotypé (la valeur par défaut est fixée à 10X)
+- la profondeur minimale de "reads" (DP) par individu génotypé (la valeur par défaut est fixée à 10X)
 - le poucentage minimimum de génotype avec la DP minimale (la valeur par défaut est fixée à 95%)
 
 

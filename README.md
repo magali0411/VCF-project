@@ -3,9 +3,11 @@
 ![](images/kofilogo1.PNG)
 ==========================
 
-KOFI est un logiciel d'analyse et de visualisation de données VCF. Son objectif principal est de filtrer un fichier vcf pour en extraire les informations utiles à son analyse. 
+
 
 # Description
+
+KOFI est un logiciel d'analyse et de visualisation de données VCF. Son objectif principal est de filtrer un fichier vcf pour en extraire les informations utiles à son analyse. 
 
 ![](images/kofiOverview.png)
 =============================

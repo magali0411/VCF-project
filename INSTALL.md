@@ -1,6 +1,6 @@
 # Requis
 
-## La version 3 et plus de Python est recommendée 
+## La version 3 et plus de Python est recommandée 
 Librairies Python
 > os
 > sys

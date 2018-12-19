@@ -14,7 +14,8 @@
 > numpy
 > seaborn
 > matplotlibe.pylot
-
+> webbrowser
+> math
 ```
 pip install --upgrade *module name*
 ```

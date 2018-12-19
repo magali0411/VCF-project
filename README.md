@@ -26,7 +26,7 @@ Au terme de l'analyse et en fonction des options choisies par l'utilisateur KOFI
 - Un fichier texte tabulé de génotypage (geno.txt) où sont affichés les variants détectés, leur position, le chromosome/Groupe de liaison et les génotypes de chaque individu. Dans ce ficher le codage numérique des génotypes est converti en nucléotides par exemple 1/0 au niveau du vcf pourra correspondre à A/T dans le fichier geno.txt
 - Un fichier texte tabulé (distrib.geno.txt). Dans ce fichier les différents type de génotypes sont répertoriés et comptabilisés pour chaque variant. 
 - Une représentation graphique sous forme de heatmap (.png) est générée. Elle traduit la densité des différents types de génotypes répertoriés pour chaque position.
-- Une représentation graphique sous forme de heatmap (.png)/ Un fichier texte tabulé (stat.geno.txt) est généré. Ce fichier répertorie et comptabilise les différents type de mutation (substitutions/ insertions/ délétions)  
+- Une représentation graphique sous forme de heatmap (.png)/ Un fichier texte tabulé (stat.geno.txt) est généré. Ce fichier répertorie et comptabilise les différents types de mutation (substitutions/ insertions/ délétions)  
 
 Les différents types de génotypes sont définis en fonction des allèles détectés au niveau du vcf ainsi les associations:
 - 0/0; 1/1; 2/2 vont correspondre respectivement à Ho1, Ho2, Ho3

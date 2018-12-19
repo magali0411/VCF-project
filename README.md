@@ -13,29 +13,29 @@ KOFI est un logiciel d'analyse et de visualisation de données VCF. Son objectif
 =============================
 
 
-Il se décline en deux versions différentes :
-
-
-
-
-## Pré-requis
-
-python3
-
-Les dernières versions des packages suivants doit être installées sur votre machine:
-os, sys, pathlib, argparse, re, numpy, pandas, seaborn, matplotlib.pyplot
-
-
-```
-pip install --upgrade *package name*
-```
-
+Il se décline en deux versions différentes : 
 
 ## Installation
 
 *[Installation manual](https://github.com/emiracherif/VCF-project/blob/master/INSTALL.md)
 
+
 ## Utilisation
+
+### Interface kofi_logi.py
+
+```
+python3 kofi_logi.py
+
+```
+
+### Pogramme kofi.py
+
+```
+python3 kofi.py -m 1 -DP 2 -p 3 filename.vcf
+
+```
+
 
 Command
 

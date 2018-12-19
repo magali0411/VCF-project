@@ -33,7 +33,7 @@ Les différents types de génotypes sont définis en fonction des allèles déte
 - 0/1; 0/2; 1/2 vont correspondre respectivement à He1, He2, He3
 Il est à noter que KOFI traite les données phasées dans le vcf mais ne tient pas compte -pour des raisons de complexité- de l'ordre des allèles lors des différentes étapes de conversion.
 
-
+![](images/kofiOutputs1.png) 
 ===========================
 
 ## Installation & Utilisation

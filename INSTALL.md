@@ -56,10 +56,18 @@ Pour lancer l'interface KOFI:
 ```
 python koficgi.py
 ```
-#### Etape 1
+#### Etape 1 : Selection du VCF
 
+![](images/1.png)
+Une fois arrivé sur l'interface KOFI, cliquer sur le bouton central "load vcf".
+![](images/2.png)
+Un explorateur de fichier permettra la séléction du fichier voulu. 
+![](images/3.png)
+Il suffit ensuite de suivre les étapes annoncées par KOFI
+![](images/4.png)
+Finalement, il est possible de selectionner les valeurs des données manquantes, de profondeur minimale de "reads' par génotype et le pourcentage de génotpyes ayant la DP minimale. 
 
-
+Kofi s'occupe ensuite de créer les 4 fichiers de sortis ainsi que l'affichage de l'heatmap. 
 
 
 

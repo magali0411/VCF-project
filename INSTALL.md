@@ -56,6 +56,7 @@ Pour lancer l'interface KOFI:
 ```
 python koficgi.py
 ```
+#### Etape 1
 
 
 

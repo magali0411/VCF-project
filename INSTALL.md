@@ -43,12 +43,14 @@ Pour lancer KOFI avec des options personalisées:
 python kofi.py file.vcf -m <int> -dp <int> -p <int>
 ```
 - -m  
-Pourcentage de données manquantes tolérées. 
-- -p
-> 
+Entier correspondant au pourcentage de données manquantes tolérées . 
+- -dp  
+Entier correspondant à la profondeur (DP) minimale de "reads"/ génotype.
+- --p  
+Entier correspondant au pourcentage de génotypes ayant la DP minimale
 
 
 
 
 
-> bla bla ....
+

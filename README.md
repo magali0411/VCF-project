@@ -1,4 +1,4 @@
-# VCF-project: KOFI (toolKit fOr vcF analysIs) ....
+# KOFI : toolKit fOr vcF analysIs
 ==========================
 
 KOFI est un logiciel d'analyse et de visualisation de données VCF. Son objectif principal est de filtrer un fichier vcf pour en extraire les informations utiles à son analyse. 
@@ -24,7 +24,7 @@ pip install --upgrade *package name*
 
 ## Installation
 
-*[Installation manual](https://github.com/emiracherif/VCF-project/blob/master/INSTALLmd)
+*[Installation manual](https://github.com/emiracherif/VCF-project/blob/master/INSTALL.md)
 
 ## Utilisation
 

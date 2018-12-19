@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from math import * 
 # Vérifie l'argument 
 parser=argparse.ArgumentParser()
 parser.add_argument("vcf" ,help="Take vcf file as argument/ vcf file path needed if it's outside your working directory")
@@ -259,16 +260,112 @@ for line in ko :
 konvfile.close()
 kogefile.close()
 
+######################################################
+############# STATS SUPPLEMENTAIRES ##################
+######################################################
+
+ins = 0
+dell = 0
+sub = 0
+
+# Ouverture du fichier de génotypage
+ko = open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+ '.distrib'+'.txt','r').readlines()        
+
+# Ouverture d'un nouveau fichier stat
+kostatfile=open(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.stat'+'.txt','a')
+
+dico = {}
+
+for line in ko: 
+
+    #keys cherche le chromosome et la position, var cherche l'alt et le ref
+    keys= re.search("LG(\d+)_(\d+)", line)
+    var = re.search("\d+\s([a-zA-Z]+)\s(([a-zA-Z]+),?([a-zA-Z]+)?)",line)
+
+    if keys:
+
+        # On associe les resultats à des variables
+        chrom = keys.group(1)
+        pos = keys.group(2)
+
+        ref = var.group(1)
+        alt = var.group(3)
+        alts = var.group(2)
+
+        # On initialise deux compteurs : un pour le nucl ref l'autre pour l'alternatif
+        count = 0
+        co = 0
+
+        # comptage des caractères du référent
+        for char in ref :
+            count +=1
+
+        #Comptage des caractères de l'alt (si il y'en a plusieurs, on prend en compte uniquement le premier)
+        for char in alt :
+            co += 1
+
+        #Comparaison pour trouver le nombre de substitutions, d'insertions et de délétions. 
+        if int(count)-int(co) == 0 :
+            sub +=1
+        elif int(count)-int(co) <= 0 :
+            ins += 1
+        else :
+            dell += 1
+
+        ######## DICTIONNAIRE ##########
+        
+        if chrom in dico.keys():
+            dico[chrom][pos] = (ref, alts)
+
+        else :
+            dico[chrom] = {}
+            dico[chrom][pos] = (ref, alts)
+
+
+# Taux de mutation
+tsub = ceil((sub/ (sub+ins+dell)) * 100)
+tins = ceil((ins/ (sub+ins+dell)) * 100)
+tdel = ceil((dell/ (sub+ins+dell)) * 100)
+
+# Ecriture dans le nouveau fichier de stat
+kostatfile.write('Types de mutation \t' + 'Substitutions' +'\t Insertions' +'\t Deletions' + str(dell) + '\n')
+kostatfile.write('Nombre \t' + str(sub) +'\t' + str(ins) +'\t' + str(dell) + '\n')
+kostatfile.write('Pourcentage\t' + str(tsub) +'\t' + str(tins) +'\t' + str(tdel) + '\n\n')
+
+#Comptages de toutes les positions
+nb_pos = 0
+for item in dico : 
+    for keys in dico[chrom] :
+        nb_pos += 1
+
+
+# Comptage des mutations par chromosomes 
+nb_mut = 0
+liste_ch = []
+liste_sch = []
+
+kostatfile.write('Chromosome \t' + 'Nombre de mutations \t' + 'Taux \n')
+
+for item in dico :
+    nb_mut = 0
+    for posi in dico[item] :
+        nb_mut +=1
+
+    # Arrondi supérieur
+    a = ceil((nb_mut/nb_pos)*100)
+
+    # Ecriture dans le fichier
+    kostatfile.write(str(item) +'\t' + str(nb_mut) + '\t ' + str(a) + '\n')
+
+    liste_ch.append(str(item))
+    liste_ch.append(str(nb_mut))
+    liste_sch.append(str(a))
+
 data = pd.read_table(filename.stem+'-m'+str(args.missing_data)+'-DP'+str(args.readDepth_genotype)+'-P'+str(args.geno_percent)+'.geno'+ '.distrib'+'.txt', delimiter="\t")
 
 df=pd.DataFrame(data[['POS','CHROM','aHo1_Total','aHo2_Total','aHo3_Total','bHe1_Total','bHe2_Total','bHe3_Total','mD_Total']])
 
-#print(df)
-#df = pd.DataFrame(np.random.random((5,5)), columns=["a","b","c","d","e"])
- 
-# Default heatmap: just a visualization of this square matrix
-# df=df.sort_index(axis=0, level=None, ascending=True)
-# df=df.sortlevel(level=0, axis=1, ascending=False)
+
 
 df = df.pivot_table(index=data[['POS']],
                         values=data[['POS','aHo1_Total','aHo2_Total','aHo3_Total','bHe1_Total','bHe2_Total','bHe3_Total','mD_Total']])
@@ -282,79 +379,6 @@ p1 = sns.heatmap(df,vmin=0,vmax=250,cmap="RdBu_r")
 
 plt.show()
 #print()
-
-
-
-
-#print(data)
-# print(data.describe())
-# data.plot.hist()
-#     
-# #Var cherche les infos importantes : Le chromosome, la position, les nucléotides et la qualité
-#         
-# 
-# 
-#    var = re.search("LG([0-9]+)\s([0-9]+)\s.\s([A-Z]+)\s([A-Z]+,*)+\s+([0-9]+.[0-9]+)", line)
-#    print("toto",var)
-#    if var :
-#        nb_var+=1
-# 
-#        chr = var.group(1)
-# 
-#        pos = var.group(2)
-#        
-#        nucl1 = var.group(3)
-#        
-#        nucl2 = var.group(4)
-#        
-#        # qual = var.group(5)
-# 
-#         # Création d'un dictionnaire qui renvoit la position exactes, les nucléotides et la qualité et fonction de la position
-#      
-#        Dico[pos] =(str(chr),str(pos),str(nucl1),str(nucl2),)
-# 
-#    else :
-# 
-#        print("Oops, it seems that something's wrong with your vcf file.")
-#        exit ()
-# #
-#for cle,valeur in Dico.items() :
-#    print(cle + " " + str(valeur))
-
-#
-#print("Nombre de variant :"+ str(nb_var))
-#
-##Utilisation de la librairie PANDAS pour le dataframe.
-##Si données manquantes, complète automatique par "NaN"
-##Permet de filtrer les données "à la sql"
-##A TESTER
-#
-#filtered = pandas.dataframe(data = Dico, index = "locus", columns ="locus" "chromosomes" "qualité" "nucléotide de base" "variant")
-#
-#print(filtered)
-#
-##if not os.path.isfile('kofile.txt'):
-##    filtered.to_csv("kofile.txt",sep="\t",encoding="utf-8", index="locus")
-##
-##
-##with open("kofile.txt", "a", encoding="utf-8") as f : 
-##    f.write(headline)
-##    print(f.read_text())
-#
-## Extraction d'une ligne 
-##filtered.iloc[1]
-#
-##Filtre
-##DataFrame.filter(items=None, like=None, regex=None, axis=None)
-#
-##On crée un index sur la position
-##dfi = df.set_index("locus")
-#
-## Renvoit la ligne en position 14 !!
-##print(dfi.loc["14"])
-#
-## Extraction des chromosomes et des locus entre 1000 et 50000
-##df.loc[1000:50000,["chr","locus"]
 
 
 

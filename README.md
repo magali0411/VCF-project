@@ -36,7 +36,7 @@ Il est à noter que KOFI traite les données phasées dans le vcf mais ne tient 
 ![](images/kofiOutputs.png)
 ===========================
 
-## Installation
+## Installation & Utilisation
 Pour installer et utiliser KOFI suivez ce lien:
 
 *[Manuel d'intallation](https://github.com/emiracherif/VCF-project/blob/master/INSTALL.md)

@@ -567,7 +567,7 @@ def nettoyage(filename, m, P, DP) :
     tdel = ceil((dell/ (sub+ins+dell)) * 100)
 
     # Ecriture dans le nouveau fichier de stat
-    kostatfile.write('Types de mutation \t' + 'Substitutions' +'\t Insertions' +'\t Deletions' + str(dell) + '\n')
+    kostatfile.write('Types de mutation \t' + 'Substitutions' +'\t Insertions' +'\t Deletions \n')
     kostatfile.write('Nombre \t' + str(sub) +'\t' + str(ins) +'\t' + str(dell) + '\n')
     kostatfile.write('Pourcentage\t' + str(tsub) +'\t' + str(tins) +'\t' + str(tdel) + '\n\n')
 

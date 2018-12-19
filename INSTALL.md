@@ -59,7 +59,7 @@ python koficgi.py
 #### Etape 1 : Selection du VCF
 
 ![](images/1.png |width=100)
-
+================================
 Une fois arrivé sur l'interface KOFI, cliquer sur le bouton central "load vcf".
 
 ![](images/2.png|width=100)

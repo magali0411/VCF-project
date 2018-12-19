@@ -43,7 +43,9 @@ Pour lancer KOFI avec des options personalisées:
 python kofi.py file.vcf -m <int> -dp <int> -p <int>
 ```
 - -m 
-> Pourcentage de données manquantes tolérées. 
+ Pourcentage de données manquantes tolérées. 
+- -p
+> 
 
 
 

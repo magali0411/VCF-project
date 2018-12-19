@@ -22,20 +22,11 @@ Il se décline en deux versions différentes :
 
 ## Utilisation
 
-### Interface kofi_logi.py
+### Lancement 
 
 ```
-python3 kofi_logi.py
-
+python3 kofi.py
 ```
-
-### Pogramme kofi.py
-
-```
-python3 kofi.py -m 1 -DP 2 -p 3 filename.vcf
-
-```
-
 
 Command
 

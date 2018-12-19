@@ -24,7 +24,7 @@ pip install --upgrade *package name*
 
 ## Installation
 
-*[Installation manual](https://github.com/emiracherif/VCF-project/blob/master/INSTALLmd)
+*[Installation manual](https://github.com/emiracherif/VCF-project/blob/master/INSTALL.md)
 
 ## Utilisation
 

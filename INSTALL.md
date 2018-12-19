@@ -1,6 +1,7 @@
 # Requis
 
-### La version 3 et plus de Python est recommendée 
+## La version 3 et plus de Python est recommendée 
+Librairies Python
 > os
 > sys
 > re
@@ -8,7 +9,11 @@
 > argparse
 > re
 
-### Softwares/Modules
+Système d'exploitation 
+> Linux / ubuntu 
+> Windows (l'installation d'anaconda est recommandée) 
+
+## Softwares/Modules
 > python3-tk
 > pandas 0.23.4
 > numpy
@@ -21,16 +26,27 @@ Pour installer les modules nécessaires au bon fonctionnnement de KOFI:
 ```
 pip install --upgrade *module name*
 ```
-
-### Installation
+## Installation
 Pour installer KOFI :
+Créer le dossier où KOFI sera installer puis:
 ```
 git clone https://github.com/emiracherif/VCF-project.git
 ```
+## Utilisation
+### Version 1: Ligne de commande
+Pour lancer KOFI avec les options par défaut:
+```
+python kofi.py file.vcf
+```
+Pour lancer KOFI avec des options personalisées:
+```
+python kofi.py file.vcf -m <int> -dp <int> -p <int>
+```
+- m 
+> Pourcentage de données manquantes tolérées. 
 
-> create the directory 'path/to/kofi' where KOFI will be installed
 
-> Go into the VCF-project (KOFI) directory get the url and clone the git repository
- 'git clone https://github.com/emiracherif/VCF-project/KOFI.git'
+
+
 
 > bla bla ....

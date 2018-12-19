@@ -7,16 +7,20 @@
 
 ## Déscription
 
-KOFI est un logiciel d'analyse et de visualisation de données VCF. Son objectif principal est de filtrer un fichier vcf pour en extraire les informations utiles à son analyse. 
+KOFI est un logiciel d'analyse et de visualisation de données VCF. Son objectif principal est de filtrer les données de génotypage d'un fichier vcf pour en extraire les informations utiles à son analyse. 
 
 ![](images/kofiOverview.png)
 =============================
-
-
-Il se décline en deux versions différentes :
-
+Pour réalliser les analyses l'utilisateur aura le choix de le faire soit avec:  
 - Une version en ligne de commande via un terminal.
 - Une interface cgi 
+
+KOFI propose à l'utilisateur de fixer:
+-les données manquantes tolérées (la valeur par défaut est fixée à 5%)
+-la profondeur minimale de "reads" (DP) par individu généotypé (la valeur par défaut est fixée à 10X)
+-le poucentage minimimum de génotype avec la DP minimale (la valeur par défaut est fixée à 95%)
+
+
 ## Les sorties KOFI
 
 ![](images/kofiOutputs.png)
@@ -24,25 +28,9 @@ Il se décline en deux versions différentes :
 
 ## Installation
 
-*[Installation manual](https://github.com/emiracherif/VCF-project/blob/master/INSTALL.md)
+*[Manuel d'intallation](https://github.com/emiracherif/VCF-project/blob/master/INSTALL.md)
 
 
-## Utilisation
-
-### Lancement 
-
-```
-python3 kofi.py
-```
-
-Command
-
-Arguments
-
-Si le vcf de départ est phasé le fichier geno respectera l'ordre du phasage meme si le genotype est noté "/"
-
-
-## Améliorations
 
 ##Contributing
 

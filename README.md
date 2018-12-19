@@ -9,7 +9,7 @@ KOFI est un logiciel d'analyse et de visualisation de données VCF. Son objectif
 
 ![](images/kofiOverview.png)
 =============================
-Pour réaliser les analyses l'utilisateur aura le choix de le faire soit avec:  
+Pour réaliser les analyses l'utilisateur pourra choisir entre :  
 - Une version en ligne de commande via un terminal.
 - Une interface cgi. 
 

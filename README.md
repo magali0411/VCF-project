@@ -21,7 +21,7 @@ KOFI propose à l'utilisateur de fixer:
 
 ## Les sorties KOFI
 
-Au terme de l'analyse et en fonction des options choisi par l'utilisateur KOFI génère plusieurs types de sorties:
+Au terme de l'analyse et en fonction des options choisies par l'utilisateur KOFI génère plusieurs types de sorties:
 - Un nouveau fichier vcf résultat des filtres effectués par l'utilisateur.
 - Un fichier texte tabulé de génotypage (geno.txt) où sont affichés les variants détectés, leur position, le chromosome/Groupe de liaison et les génotypes de chaque individu. Dans ce ficher le codage numérique des génotypes est converti en nucléotides par exemple 1/0 au niveau du vcf pourra correspondre à A/T dans le fichier geno.txt
 - Un fichier texte tabulé (distrib.geno.txt). Dans ce fichier les différents type de génotypes sont répertoriés et comptabilisés pour chaque variant. 

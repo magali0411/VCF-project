@@ -1,6 +1,6 @@
-# Requirements
+# Requis
 
-### Python recomended version 3 and later/Tkinter recomended version python3-tk
+### La version 3 et plus de Python est recommendée 
 > os
 > sys
 > re
@@ -16,12 +16,18 @@
 > matplotlibe.pylot
 > webbrowser
 > math
+
+Pour installer les modules nécessaires au bon fonctionnnement de KOFI:
 ```
 pip install --upgrade *module name*
 ```
 
+### Installation
+Pour installer KOFI :
+```
+git clone https://github.com/emiracherif/VCF-project.git
+```
 
-### Installation 
 > create the directory 'path/to/kofi' where KOFI will be installed
 
 > Go into the VCF-project (KOFI) directory get the url and clone the git repository

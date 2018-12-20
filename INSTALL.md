@@ -27,8 +27,7 @@ Pour installer les modules nécessaires au bon fonctionnnement de KOFI:
 pip install --upgrade *module name*
 ```
 ## Installation
-Pour installer KOFI :
-Créer le dossier où KOFI sera installer puis:
+Pour installer KOFI, créer le dossier où KOFI sera installé puis:
 ```
 git clone https://github.com/emiracherif/VCF-project.git
 ```

@@ -60,19 +60,18 @@ python koficgi.py
 
 ![](images/KOFIFinterface.png)
 
-La séléction du fichier VCF se fait grâce à un explorateur de fichier. 
-
 #### Etape 2 : Choix des options
 
-![](images/KOFIFAna.png)
-
-Les valeurs des données manquantes, de la profondeur de read et du pourcentage de génotype peuvent être séléctionnées ou écrites dans les cases.
-Les boutons d'aides [?] donnent des informations les valeurs à entrer. 
+![](images/KOFIFAna.png) 
 
 #### Etape 3 : Resultat
 
 ![](images/KOFIResul.png)
 
-Avant d'ouvrir les fichiers d'analyses il est conseillé de fermer KOFI.
+Avant d'ouvrir les fichiers d'analyses il est très fortement conseillé de fermer KOFI.
 
+### Aide
+
+Un lien vers le manuel d'utilisation et le readme sont disponibles dans le menu de KOFI.
+Des boutons d'aides [?] donnent des informations sur les valeurs à entrer lors de l'étape de filtration.
 

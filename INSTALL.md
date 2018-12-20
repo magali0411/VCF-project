@@ -58,23 +58,21 @@ python koficgi.py
 ```
 #### Etape 1 : Selection du VCF
 
-![](images/1.png |width=100)
+![](images/KOFIFinterface.png)
 
-Une fois arrivé sur l'interface KOFI, cliquer sur le bouton central "load vcf".
+La séléction du fichier VCF se fait grâce à un explorateur de fichier. 
 
-![](images/2.png|width=100)
+#### Etape 2 : Choix des options
 
-Un explorateur de fichier permettra la séléction du fichier voulu. 
+![](images/KOFIFAna.png)
 
-![](images/3.png|width=100)
+Les valeurs des données manquantes, de la profondeur de read et du pourcentage de génotype peuvent être séléctionnées ou écrites dans les cases.
+Les boutons d'aides [?] donnent des informations les valeurs à entrer. 
 
-Il suffit ensuite de suivre les étapes annoncées par KOFI
+#### Etape 3 : Resultat
 
-![](images/4.png|width=100)
+![](images/KOFIResul.png)
 
-Finalement, il est possible de selectionner les valeurs des données manquantes, de profondeur minimale de "reads' par génotype et le pourcentage de génotpyes ayant la DP minimale. 
-
-Kofi s'occupe ensuite de créer les 4 fichiers de sortis ainsi que l'affichage de l'heatmap. 
-
+Avant d'ouvrir les fichiers d'analyses il est conseillé de fermer KOFI.
 
 

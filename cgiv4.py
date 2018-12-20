@@ -583,7 +583,7 @@ def nettoyage(filename, m, P, DP) :
     liste_ch = []
     liste_sch = []
 
-    kostatfile.write('Chromosome \t' + 'Nombre de mutations \t' + 'Taux \n')
+    kostatfile.write('Chromosome \t' + 'Nombre de mutations \t' + 'Pourcentage \n')
 
     for item in dico :
         nb_mut = 0

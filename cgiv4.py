@@ -346,16 +346,16 @@ def nettoyage(filename, m, P, DP) :
     nb_indiv = 0
 
     #Creation d'un nouveau fichier vcf et on récupère son nom
-    kofile = open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.vcf','a')
-    nameko = filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.vcf'
+    kofile = open(filename.stem+'-m'+str(int(m))+'-DP'+str(DP)+'-P'+str(int(P))+'.vcf','a')
+    nameko = filename.stem+'-m'+str(int(m))+'-DP'+str(DP)+'-P'+str(int(P))+'.vcf'
 
     #Creation du nouveau fichier de genotypage (conversion du vcf) + son nom
-    konvfile=open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.geno'+'.txt','a')
-    namekonv = filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.geno'+'.txt'
+    konvfile=open(filename.stem+'-m'+str(int(m))+'-DP'+str(DP)+'-P'+str(int(P))+'.geno'+'.txt','a')
+    namekonv = filename.stem+'-m'+str(int(m))+'-DP'+str(DP)+'-P'+str(int(P))+'.geno'+'.txt'
 
     #Creation du nouveau fichier de genotypage distrib + son nom 
-    kogefile=open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.geno'+ '.distrib'+'.txt','a')
-    namekoge = filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.geno'+ '.distrib'+'.txt'
+    kogefile=open(filename.stem+'-m'+str(int(m))+'-DP'+str(DP)+'-P'+str(int(P))+'.geno'+ '.distrib'+'.txt','a')
+    namekoge = filename.stem+'-m'+str(int(m))+'-DP'+str(DP)+'-P'+str(int(P))+'.geno'+ '.distrib'+'.txt'
 
     #Ecriture de l'entête dans le nouveau vcf kofile
     from re import finditer
@@ -427,7 +427,7 @@ def nettoyage(filename, m, P, DP) :
     ####### Etape 1.2 VCF2genofile #######
 
     # Ouverture du nouveau fichier vcf
-    ko = open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.vcf',"r").readlines()        
+    ko = open(filename.stem+'-m'+str(int(m))+'-DP'+str(DP)+'-P'+str(int(P))+'.vcf',"r").readlines()        
 
     # Remplissage du geno file 
     for line in ko :
@@ -506,11 +506,11 @@ def nettoyage(filename, m, P, DP) :
     sub = 0
 
     # Ouverture du fichier de génotypage
-    kogefile=open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.geno'+ '.distrib'+'.txt','r')
+    kogefile=open(filename.stem+'-m'+str(int(m))+'-DP'+str(DP)+'-P'+str(int(P))+'.geno'+ '.distrib'+'.txt','r')
 
     # Ouverture d'un nouveau fichier stat
-    kostatfile=open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.stat'+'.txt','a')
-    namekostat = str(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.stat'+'.txt')
+    kostatfile=open(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(int(P))+'.stat'+'.txt','a')
+    namekostat = str(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(int(P))+'.stat'+'.txt')
     
     dico = {}
 
@@ -600,6 +600,9 @@ def nettoyage(filename, m, P, DP) :
         liste_ch.append(str(nb_mut))
         liste_sch.append(str(a))
 
+    kostatfile.close()
+    kogefile.close()
+
     showinfo(title="files created", message = "Created on your working directory : \n{}".format('-'+nameko+'\n'+'-'+namekonv +'\n'+'-'+namekoge) + '\n'+'-'+namekostat)
     
     if showinfo :
@@ -632,7 +635,7 @@ def nettoyage(filename, m, P, DP) :
 def heat(m, DP, P,filename) : 
 
     #Utilisation de pandas pour réaliser un dataframe 
-    data = pd.read_table(filename.stem+'-m'+str(m)+'-DP'+str(DP)+'-P'+str(P)+'.geno'+ '.distrib'+'.txt', delimiter="\t")
+    data = pd.read_table(filename.stem+'-m'+str(int(m))+'-DP'+str(DP)+'-P'+str(int(P))+'.geno'+ '.distrib'+'.txt', delimiter="\t")
 
     df=pd.DataFrame(data[['POS','CHROM','aHo1_Total','aHo2_Total','aHo3_Total','bHe1_Total','bHe2_Total','bHe3_Total','mD_Total']])
  

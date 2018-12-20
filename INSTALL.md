@@ -57,15 +57,10 @@ Pour lancer l'interface KOFI:
 python koficgi.py
 ```
 #### Etape 1 : Selection du VCF
-
 ![](images/KOFIFinterface.png)
-
 #### Etape 2 : Choix des options
-
 ![](images/KOFIFAna.png) 
-
 #### Etape 3 : Resultat
-
 ![](images/KOFIResul.png)
 
 Avant d'ouvrir les fichiers d'analyses il est très fortement conseillé de fermer KOFI.
